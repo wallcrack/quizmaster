@@ -10,10 +10,10 @@
     <form method="post" action="{{ url_for('quiz.finish', session_id=session.id) }}" class="space-y-6">
         {% for record in subjective_records %}
             <div class="bg-white p-6 rounded shadow">
-                <div class="font-medium mb-2">{{ record.question.content | nl2br }}</div>
+                <div class="font-medium mb-2">{{ record.question.content | markdown }}</div>
                 <div class="text-sm text-gray-600 mb-4">你的答案：{{ record.user_answer or '（未作答）' }}</div>
                 <div class="bg-gray-50 p-3 rounded mb-4 text-sm">
-                    <span class="font-medium">参考答案：</span>{{ record.question.answer }}
+                    <span class="font-medium">参考答案：</span>{{ record.question.answer | markdown }}
                 </div>
 
                 <div class="mb-3">

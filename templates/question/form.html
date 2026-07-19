@@ -18,6 +18,9 @@
         <div>
             <label class="block text-sm font-medium mb-1">题干</label>
             <textarea name="content" rows="4" required class="w-full border rounded px-3 py-2">{{ question.content if question else '' }}</textarea>
+            <p class="text-xs text-gray-500 mt-1">
+                支持 Markdown 格式和 LaTeX 公式（用 $ 或 $$ 包裹，如 $E=mc^2$）。
+            </p>
         </div>
 
         <div id="options-field">
@@ -36,6 +39,7 @@
         <div>
             <label class="block text-sm font-medium mb-1">答案解析</label>
             <textarea name="explanation" rows="3" class="w-full border rounded px-3 py-2">{{ question.explanation if question else '' }}</textarea>
+            <p class="text-xs text-gray-500 mt-1">支持 Markdown 和 LaTeX 公式。</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

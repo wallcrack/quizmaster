@@ -1,6 +1,9 @@
 from pathlib import Path
 
+import bleach
+import markdown as md
 from flask import Flask, render_template
+from markupsafe import Markup
 
 from config import Config
 from extensions import db, login_manager, migrate
@@ -36,6 +39,29 @@ def create_app(config_class=Config):
         if value is None:
             return ""
         return value.replace("\n", "<br>")
+
+    @app.template_filter("markdown")
+    def markdown_filter(text):
+        if text is None:
+            return ""
+        html = md.markdown(text, extensions=["extra", "nl2br", "sane_lists"])
+        allowed_tags = [
+            "p", "br", "strong", "em", "ul", "ol", "li", "code", "pre",
+            "blockquote", "h1", "h2", "h3", "h4", "h5", "h6", "a", "img",
+            "table", "thead", "tbody", "tr", "th", "td", "hr", "div", "span"
+        ]
+        allowed_attributes = {
+            "*": ["class"],
+            "a": ["href", "title"],
+            "img": ["src", "alt", "title"],
+        }
+        cleaned = bleach.clean(
+            html,
+            tags=allowed_tags,
+            attributes=allowed_attributes,
+            strip=True,
+        )
+        return Markup(cleaned)
 
     @app.route("/")
     def index():
