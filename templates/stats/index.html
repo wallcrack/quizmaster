@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}学习统计 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold">学习统计</h1>
+
+    <!-- 整体概览 -->
+    <div class="bg-white p-6 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">整体概览</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div>
+                <div class="text-3xl font-bold text-blue-600">{{ overview.session_count }}</div>
+                <div class="text-sm text-gray-500">完成练习</div>
+            </div>
+            <div>
+                <div class="text-3xl font-bold">{{ overview.total_records }}</div>
+                <div class="text-sm text-gray-500">累计答题</div>
+            </div>
+            <div>
+                <div class="text-3xl font-bold text-green-600">{{ overview.accuracy }}%</div>
+                <div class="text-sm text-gray-500">客观题正确率</div>
+            </div>
+            <div>
+                <div class="text-3xl font-bold text-purple-600">{{ overview.avg_score }}%</div>
+                <div class="text-sm text-gray-500">平均得分</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 薄弱知识点 -->
+    <div class="bg-white p-6 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">薄弱知识点推荐</h2>
+        {% if weak_points %}
+            <div class="space-y-3">
+                {% for item in weak_points %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div>
+                            <span class="font-medium">{{ item.tag.name }}</span>
+                            <span class="text-sm text-gray-500 ml-2">
+                                练习 {{ item.total_count }} 次，正确 {{ item.correct_count }} 次
+                            </span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm font-medium {% if item.avg_score < 40 %}text-red-600{% elif item.avg_score < 70 %}text-yellow-600{% else %}text-green-600{% endif %}">
+                                {{ item.avg_score }}%
+                            </span>
+                            <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
+                                {{ item.suggestion }}
+                            </span>
+                            <a href="{{ url_for('quiz.setup') }}" class="text-sm text-blue-600 hover:underline">去练习</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500">暂无练习数据，先去完成一次练习吧。</p>
+        {% endif %}
+    </div>
+
+    <!-- 知识点统计 -->
+    <div class="bg-white p-6 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">知识点正确率</h2>
+        {% if tag_stats %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-2">知识点</th>
+                            <th class="text-right py-2">练习次数</th>
+                            <th class="text-right py-2">正确次数</th>
+                            <th class="text-right py-2">正确率</th>
+                            <th class="text-right py-2">最近练习</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in tag_stats %}
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="py-2 font-medium">{{ item.tag.name }}</td>
+                                <td class="py-2 text-right">{{ item.total_count }}</td>
+                                <td class="py-2 text-right">{{ item.correct_count }}</td>
+                                <td class="py-2 text-right">
+                                    <span class="{% if item.avg_score < 40 %}text-red-600{% elif item.avg_score < 70 %}text-yellow-600{% else %}text-green-600{% endif %}">
+                                        {{ item.avg_score }}%
+                                    </span>
+                                </td>
+                                <td class="py-2 text-right text-gray-500">
+                                    {{ item.last_practiced_at.strftime('%Y-%m-%d %H:%M') if item.last_practiced_at else '-' }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-gray-500">暂无知识点统计数据。</p>
+        {% endif %}
+    </div>
+
+    <!-- 最近练习 -->
+    <div class="bg-white p-6 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">最近练习</h2>
+        {% if overview.recent_sessions %}
+            <div class="space-y-2">
+                {% for session in overview.recent_sessions %}
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <div>
+                            <span class="font-medium">练习 #{{ session.id }}</span>
+                            <span class="text-sm text-gray-500 ml-2">{{ session.mode.value }}</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            {{ session.completed_at.strftime('%Y-%m-%d %H:%M') if session.completed_at else '-' }}
+                        </div>
+                        <a href="{{ url_for('quiz.result', session_id=session.id) }}" class="text-sm text-blue-600 hover:underline">查看结果</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500">暂无练习记录。</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

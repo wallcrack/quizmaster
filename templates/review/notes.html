@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}笔记 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+    <h1 class="text-2xl font-bold">我的笔记</h1>
+
+    {% if records %}
+        <div class="space-y-4">
+            {% for record in records %}
+                <div class="bg-white p-6 rounded shadow">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="font-medium text-lg">
+                            {{ record.question.content | markdown }}
+                        </div>
+                        <div class="text-sm text-gray-500 whitespace-nowrap ml-4">
+                            {{ record.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </div>
+                    </div>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-4">
+                        <div class="font-medium text-sm mb-1">笔记</div>
+                        <div class="text-gray-700">{{ record.note }}</div>
+                    </div>
+
+                    <div class="text-sm text-gray-500 mb-4">
+                        你的答案：{{ record.user_answer or '（未作答）' }} | 正确答案：{{ record.question.answer | markdown }}
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs px-2 py-1 rounded
+                            {% if record.mastery_level.value == 'weak' %}bg-red-100 text-red-800
+                            {% elif record.mastery_level.value == 'familiar' %}bg-yellow-100 text-yellow-800
+                            {% elif record.mastery_level.value == 'mastered' %}bg-green-100 text-green-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ record.mastery_level.value }}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white p-8 rounded shadow text-center text-gray-500">
+            暂无笔记。
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

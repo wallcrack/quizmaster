@@ -30,6 +30,8 @@
                     <span>{{ current_user.username }}</span>
                     <a href="{{ url_for('question.list_questions') }}" class="hover:underline">题库</a>
                     <a href="{{ url_for('quiz.setup') }}" class="hover:underline">练习</a>
+                    <a href="{{ url_for('review.wrong') }}" class="hover:underline">错题本</a>
+                    <a href="{{ url_for('stats.index') }}" class="hover:underline">统计</a>
                     <a href="{{ url_for('auth.logout') }}" class="hover:underline">登出</a>
                 {% else %}
                     <a href="{{ url_for('auth.login') }}" class="hover:underline">登录</a>

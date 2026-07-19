@@ -8,7 +8,7 @@ from markupsafe import Markup
 from config import Config
 from extensions import db, login_manager, migrate
 from models import User
-from routes import auth, question, quiz
+from routes import auth, question, quiz, review, stats
 
 
 @login_manager.user_loader
@@ -33,6 +33,8 @@ def create_app(config_class=Config):
     app.register_blueprint(auth.bp)
     app.register_blueprint(question.bp)
     app.register_blueprint(quiz.bp)
+    app.register_blueprint(stats.bp)
+    app.register_blueprint(review.bp)
 
     @app.template_filter("nl2br")
     def nl2br(value):
