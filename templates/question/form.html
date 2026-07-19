@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}{{ '编辑' if question else '新建' }}题目 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-6">{{ '编辑' if question else '新建' }}题目</h1>
+    <form method="post" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">题型</label>
+            <select name="type" id="type" class="w-full border rounded px-3 py-2" onchange="toggleFields()">
+                {% for value, label in types %}
+                    <option value="{{ value }}" {% if question and question.type.value == value %}selected{% elif not question and value == 'single' %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">题干</label>
+            <textarea name="content" rows="4" required class="w-full border rounded px-3 py-2">{{ question.content if question else '' }}</textarea>
+        </div>
+
+        <div id="options-field">
+            <label class="block text-sm font-medium mb-1">选项（每行一个）</label>
+            <textarea name="options" rows="5" class="w-full border rounded px-3 py-2">{% if question and question.options %}{{ question.options | join('\n') }}{% endif %}</textarea>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">正确答案 / 参考答案</label>
+            <input type="text" name="answer" value="{{ question.answer if question else '' }}" required class="w-full border rounded px-3 py-2">
+            <p class="text-xs text-gray-500 mt-1">
+                单选/判断填选项序号（从 0 开始）或文字；多选可填多个序号用逗号分隔，如 0,2。
+            </p>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">答案解析</label>
+            <textarea name="explanation" rows="3" class="w-full border rounded px-3 py-2">{{ question.explanation if question else '' }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">难度</label>
+                <select name="difficulty" class="w-full border rounded px-3 py-2">
+                    {% for value, label in difficulties %}
+                        <option value="{{ value }}" {% if question and question.difficulty.value == value %}selected{% elif not question and value == 'medium' %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">出处（书名/课程）</label>
+                <input type="text" name="source" value="{{ question.source if question else '' }}" class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">章节</label>
+                <input type="text" name="chapter" value="{{ question.chapter if question else '' }}" class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">知识点标签</label>
+                <select name="tags" multiple class="w-full border rounded px-3 py-2" size="5">
+                    {% for tag in tags %}
+                        <option value="{{ tag.id }}" {% if question and tag in question.tags %}selected{% endif %}>{{ tag.name }}</option>
+                    {% endfor %}
+                </select>
+                <p class="text-xs text-gray-500">按住 Ctrl 多选</p>
+            </div>
+        </div>
+
+        <div class="pt-4 flex space-x-3">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">保存</button>
+            <a href="{{ url_for('question.list_questions') }}" class="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400">取消</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleFields() {
+    const type = document.getElementById('type').value;
+    const optionsField = document.getElementById('options-field');
+    if (type === 'single' || type === 'multiple') {
+        optionsField.style.display = 'block';
+    } else {
+        optionsField.style.display = 'none';
+    }
+}
+toggleFields();
+</script>
+{% endblock %}

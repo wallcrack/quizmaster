@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}注册 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded shadow">
+    <h1 class="text-2xl font-bold mb-6 text-center">注册</h1>
+    <form method="post" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">用户名</label>
+            <input type="text" name="username" required class="w-full border rounded px-3 py-2">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">密码</label>
+            <input type="password" name="password" required minlength="4" class="w-full border rounded px-3 py-2">
+        </div>
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+            注册
+        </button>
+    </form>
+    <p class="mt-4 text-center text-sm text-gray-600">
+        已有账号？<a href="{{ url_for('auth.login') }}" class="text-blue-600 hover:underline">立即登录</a>
+    </p>
+</div>
+{% endblock %}

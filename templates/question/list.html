@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}题库 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold">题库管理</h1>
+    <div class="space-x-2">
+        <a href="{{ url_for('question.import_page') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">导入</a>
+        <a href="{{ url_for('question.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">新建题目</a>
+    </div>
+</div>
+
+<form method="get" class="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div>
+        <label class="block text-sm font-medium">题型</label>
+        <select name="type" class="w-full border rounded px-2 py-1">
+            <option value="">全部</option>
+            {% for value, label in types %}
+                <option value="{{ value }}" {% if filters.get('type') == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-sm font-medium">章节</label>
+        <input type="text" name="chapter" value="{{ filters.get('chapter', '') }}" class="w-full border rounded px-2 py-1">
+    </div>
+    <div>
+        <label class="block text-sm font-medium">出处</label>
+        <input type="text" name="source" value="{{ filters.get('source', '') }}" class="w-full border rounded px-2 py-1">
+    </div>
+    <div>
+        <label class="block text-sm font-medium">标签</label>
+        <select name="tag" class="w-full border rounded px-2 py-1">
+            <option value="">全部</option>
+            {% for tag in tags %}
+                <option value="{{ tag.name }}" {% if filters.get('tag') == tag.name %}selected{% endif %}>{{ tag.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="md:col-span-4 text-right">
+        <button type="submit" class="bg-gray-600 text-white px-4 py-1 rounded hover:bg-gray-700">筛选</button>
+    </div>
+</form>
+
+<div class="space-y-3">
+    {% for q in questions %}
+        <div class="bg-white p-4 rounded shadow">
+            <div class="flex justify-between items-start">
+                <div class="font-medium">
+                    <span class="text-xs bg-gray-200 px-2 py-0.5 rounded mr-2">
+                        {% for value, label in types %}{% if value == q.type.value %}{{ label }}{% endif %}{% endfor %}
+                    </span>
+                    {{ q.content | truncate(120) }}
+                </div>
+                <div class="flex space-x-2 text-sm">
+                    <a href="{{ url_for('question.edit', id=q.id) }}" class="text-blue-600 hover:underline">编辑</a>
+                    <form method="post" action="{{ url_for('question.delete', id=q.id) }}" onsubmit="return confirm('确定删除？');">
+                        <button type="submit" class="text-red-600 hover:underline">删除</button>
+                    </form>
+                </div>
+            </div>
+            <div class="text-sm text-gray-500 mt-2">
+                {% if q.chapter %}章节: {{ q.chapter }} {% endif %}
+                {% if q.source %}出处: {{ q.source }} {% endif %}
+                {% if q.tags %}标签: {% for t in q.tags %}<span class="bg-blue-100 text-blue-800 px-1 rounded">{{ t.name }}</span> {% endfor %}{% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center text-gray-500 py-8">暂无题目，请先<a href="{{ url_for('question.create') }}" class="text-blue-600 hover:underline">新建</a>。</div>
+    {% endfor %}
+</div>
+
+{% if pagination.pages > 1 %}
+<div class="flex justify-center space-x-2 mt-6">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('question.list_questions', page=pagination.prev_num, **filters) }}" class="px-3 py-1 border rounded hover:bg-gray-100">上一页</a>
+    {% endif %}
+    <span class="px-3 py-1">第 {{ pagination.page }} / {{ pagination.pages }} 页</span>
+    {% if pagination.has_next %}
+        <a href="{{ url_for('question.list_questions', page=pagination.next_num, **filters) }}" class="px-3 py-1 border rounded hover:bg-gray-100">下一页</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

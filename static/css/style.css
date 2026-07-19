@@ -1,0 +1,10 @@
+/* QuizMaster custom styles */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

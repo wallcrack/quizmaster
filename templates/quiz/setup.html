@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}开始练习 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-6">开始练习</h1>
+
+    <form method="post" action="{{ url_for('quiz.start') }}" class="space-y-6">
+        <div>
+            <label class="block text-sm font-medium mb-2">练习模式</label>
+            <select name="mode" id="mode" onchange="toggleMode()" class="w-full border rounded px-3 py-2">
+                <option value="random">随机抽题</option>
+                <option value="tag">按知识点练习</option>
+                <option value="chapter">按章节练习</option>
+                <option value="wrong">错题重练</option>
+            </select>
+        </div>
+
+        <div id="tag-field" style="display:none">
+            <label class="block text-sm font-medium mb-1">选择知识点标签</label>
+            <select name="tag_ids" multiple class="w-full border rounded px-3 py-2" size="5">
+                {% for tag in tags %}
+                    <option value="{{ tag.id }}">{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+            <p class="text-xs text-gray-500">按住 Ctrl 多选</p>
+        </div>
+
+        <div id="chapter-field" style="display:none">
+            <label class="block text-sm font-medium mb-1">选择章节</label>
+            <input list="chapters-list" name="chapter" class="w-full border rounded px-3 py-2">
+            <datalist id="chapters-list">
+                {% for chapter in chapters %}
+                    <option value="{{ chapter }}"></option>
+                {% endfor %}
+            </datalist>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">题目数量</label>
+                <input type="number" name="count" value="10" min="1" max="100" class="w-full border rounded px-3 py-2">
+            </div>
+            <div class="flex items-center">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="show_explanation" value="1" class="h-4 w-4">
+                    <span class="text-sm">答完立即显示解析</span>
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">开始练习</button>
+    </form>
+</div>
+
+<script>
+function toggleMode() {
+    const mode = document.getElementById('mode').value;
+    document.getElementById('tag-field').style.display = mode === 'tag' ? 'block' : 'none';
+    document.getElementById('chapter-field').style.display = mode === 'chapter' ? 'block' : 'none';
+}
+toggleMode();
+</script>
+{% endblock %}

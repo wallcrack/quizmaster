@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}导入题库 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-6">导入题库</h1>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">选择 YAML 或 JSON 文件</label>
+            <input type="file" name="file" accept=".yaml,.yml,.json" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">导入</button>
+    </form>
+
+    <div class="mt-6 text-sm text-gray-600 bg-gray-50 p-4 rounded">
+        <p class="font-medium mb-2">文件格式示例（YAML）：</p>
+        <pre class="overflow-x-auto">questions:
+  - type: single
+    content: "Python 中列表推导式的关键字是？"
+    options: ["for", "if", "in", "all of the above"]
+    answer: "0"
+    explanation: "列表推导式使用 for 关键字。"
+    difficulty: easy
+    source: "Python Cookbook"
+    chapter: "第 2 章"
+    tags: ["python", "语法"]
+  - type: subjective
+    content: "简述 HTTP 与 HTTPS 的区别。"
+    answer: "HTTPS 在 HTTP 基础上加入 SSL/TLS 加密。"
+    explanation: "..."
+    tags: ["网络"]</pre>
+    </div>
+</div>
+{% endblock %}

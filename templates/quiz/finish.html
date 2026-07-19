@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}自评 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">主观题自评</h1>
+    <p class="text-gray-600 mb-6">请对照参考答案，为每道主观题打分并记录笔记。</p>
+
+    <form method="post" action="{{ url_for('quiz.finish', session_id=session.id) }}" class="space-y-6">
+        {% for record in subjective_records %}
+            <div class="bg-white p-6 rounded shadow">
+                <div class="font-medium mb-2">{{ record.question.content | nl2br }}</div>
+                <div class="text-sm text-gray-600 mb-4">你的答案：{{ record.user_answer or '（未作答）' }}</div>
+                <div class="bg-gray-50 p-3 rounded mb-4 text-sm">
+                    <span class="font-medium">参考答案：</span>{{ record.question.answer }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-1">自评分数（0-100）</label>
+                    <input type="number" name="score_{{ record.id }}" min="0" max="100" required class="w-32 border rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">笔记</label>
+                    <textarea name="note_{{ record.id }}" rows="2" class="w-full border rounded px-3 py-2"></textarea>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-gray-600">本次练习没有主观题，可直接提交。</p>
+        {% endfor %}
+
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">提交并查看结果</button>
+    </form>
+</div>
+{% endblock %}

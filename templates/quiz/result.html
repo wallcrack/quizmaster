@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}练习结果 - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">练习结果</h1>
+
+    <div class="bg-white p-6 rounded shadow mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div>
+            <div class="text-3xl font-bold text-blue-600">{{ summary.overall_score }}%</div>
+            <div class="text-sm text-gray-500">总得分率</div>
+        </div>
+        <div>
+            <div class="text-3xl font-bold">{{ summary.total }}</div>
+            <div class="text-sm text-gray-500">总题数</div>
+        </div>
+        <div>
+            <div class="text-3xl font-bold text-green-600">{{ summary.objective_correct }}/{{ summary.objective_total }}</div>
+            <div class="text-sm text-gray-500">客观题正确</div>
+        </div>
+        <div>
+            <div class="text-3xl font-bold text-purple-600">{{ summary.subjective_avg or '-' }}%</div>
+            <div class="text-sm text-gray-500">主观题均分</div>
+        </div>
+    </div>
+
+    <div class="space-y-3">
+        {% for record in summary.records %}
+            <div class="bg-white p-4 rounded shadow">
+                <div class="flex justify-between items-start">
+                    <div class="font-medium">{{ record.question.content | truncate(100) }}</div>
+                    <div class="text-sm whitespace-nowrap ml-4">
+                        {% if record.question.type.value == 'subjective' %}
+                            <span class="text-purple-600">自评 {{ record.self_evaluation or '-' }}</span>
+                        {% elif record.is_correct %}
+                            <span class="text-green-600">✓ 正确</span>
+                        {% else %}
+                            <span class="text-red-600">✗ 错误</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600 mt-2">
+                    你的答案：{{ record.user_answer or '（未作答）' }} | 正确答案：{{ record.question.answer }}
+                </div>
+                {% if record.question.explanation %}
+                    <div class="text-sm text-gray-500 mt-2 bg-gray-50 p-2 rounded">
+                        解析：{{ record.question.explanation }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-6 flex space-x-3">
+        <a href="{{ url_for('quiz.setup') }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">再练一次</a>
+        <a href="{{ url_for('index') }}" class="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400">返回首页</a>
+    </div>
+</div>
+{% endblock %}
