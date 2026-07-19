@@ -5,7 +5,7 @@
 {% block content %}
 <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
     <h1 class="text-2xl font-bold mb-6">{{ '编辑' if question else '新建' }}题目</h1>
-    <form method="post" class="space-y-4">
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
         <div>
             <label class="block text-sm font-medium mb-1">题型</label>
             <select name="type" id="type" class="w-full border rounded px-3 py-2" onchange="toggleFields()">
@@ -40,6 +40,21 @@
             <label class="block text-sm font-medium mb-1">答案解析</label>
             <textarea name="explanation" rows="3" class="w-full border rounded px-3 py-2">{{ question.explanation if question else '' }}</textarea>
             <p class="text-xs text-gray-500 mt-1">支持 Markdown 和 LaTeX 公式。</p>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">题目配图（可选）</label>
+            {% if question and question.image %}
+                <div class="mb-2">
+                    <img src="{{ url_for('static', filename='uploads/' + question.image) }}" alt="题目配图" class="max-w-xs rounded border">
+                    <label class="flex items-center space-x-2 mt-2 text-sm">
+                        <input type="checkbox" name="remove_image" value="1" class="h-4 w-4">
+                        <span>删除当前图片</span>
+                    </label>
+                </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*" class="w-full border rounded px-3 py-2">
+            <p class="text-xs text-gray-500 mt-1">支持 png/jpg/jpeg/gif/webp，最大 16MB。</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

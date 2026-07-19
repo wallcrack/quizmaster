@@ -8,8 +8,8 @@
 
     <form method="post" enctype="multipart/form-data" class="space-y-4">
         <div>
-            <label class="block text-sm font-medium mb-1">选择 YAML 或 JSON 文件</label>
-            <input type="file" name="file" accept=".yaml,.yml,.json" required class="w-full border rounded px-3 py-2">
+            <label class="block text-sm font-medium mb-1">选择 YAML / JSON / Markdown 文件</label>
+            <input type="file" name="file" accept=".yaml,.yml,.json,.md,.markdown" required class="w-full border rounded px-3 py-2">
         </div>
 
         <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">导入</button>
@@ -26,12 +26,32 @@
     difficulty: easy
     source: "Python Cookbook"
     chapter: "第 2 章"
-    tags: ["python", "语法"]
-  - type: subjective
-    content: "简述 HTTP 与 HTTPS 的区别。"
-    answer: "HTTPS 在 HTTP 基础上加入 SSL/TLS 加密。"
-    explanation: "..."
-    tags: ["网络"]</pre>
+    tags: ["python", "语法"]</pre>
+
+        <p class="font-medium mt-4 mb-2">Markdown 格式示例：</p>
+        <pre class="overflow-x-auto">---
+type: single
+difficulty: easy
+source: Python Cookbook
+chapter: 第 2 章
+tags: [python, 语法]
+options:
+  - for
+  - if
+  - in
+  - all of the above
+answer: "0"
+explanation: 列表推导式使用 for 关键字。
+---
+题干内容（支持 Markdown 和 LaTeX 公式）
+---
+type: subjective
+difficulty: medium
+tags: [网络]
+---
+简述 HTTP 与 HTTPS 的区别。
+---
+</pre>
         <p class="mt-3 font-medium">说明：</p>
         <ul class="list-disc pl-5 mt-1 space-y-1">
             <li>题干和解析支持 Markdown 格式</li>

@@ -74,6 +74,7 @@ class Question(db.Model):
     difficulty = db.Column(db.Enum(Difficulty), default=Difficulty.medium)
     source = db.Column(db.String(200), nullable=True)  # book/course name
     chapter = db.Column(db.String(200), nullable=True)
+    image = db.Column(db.String(500), nullable=True)  # uploaded image filename
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 

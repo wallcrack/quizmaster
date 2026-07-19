@@ -29,7 +29,7 @@
         {% for record in summary.records %}
             <div class="bg-white p-4 rounded shadow">
                 <div class="flex justify-between items-start">
-                    <div class="font-medium">{{ record.question.content | truncate(100) }}</div>
+                    <div class="font-medium">{{ record.question.content | markdown }}</div>
                     <div class="text-sm whitespace-nowrap ml-4">
                         {% if record.question.type.value == 'subjective' %}
                             <span class="text-purple-600">自评 {{ record.self_evaluation or '-' }}</span>
@@ -40,6 +40,11 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if record.question.image %}
+                    <div class="mt-2">
+                        <img src="{{ url_for('static', filename='uploads/' + record.question.image) }}" alt="题目配图" class="max-w-xs rounded border">
+                    </div>
+                {% endif %}
                 <div class="text-sm text-gray-600 mt-2">
                     你的答案：{{ record.user_answer or '（未作答）' }} | 正确答案：{{ record.question.answer | markdown }}
                 </div>

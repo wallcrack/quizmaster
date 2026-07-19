@@ -22,31 +22,64 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
-    <nav class="bg-blue-600 text-white shadow">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="{{ url_for('index') }}" class="text-xl font-bold">QuizMaster</a>
-            <div class="space-x-4 text-sm">
+    <nav class="bg-blue-600 text-white shadow sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <a href="{{ url_for('index') }}" class="text-xl font-bold flex items-center space-x-2">
+                    <span>📝</span>
+                    <span>QuizMaster</span>
+                </a>
+
+                <!-- Desktop nav -->
+                <div class="hidden md:flex items-center space-x-4 text-sm">
+                    {% if current_user.is_authenticated %}
+                        <span class="text-blue-100">{{ current_user.username }}</span>
+                        <a href="{{ url_for('question.list_questions') }}" class="hover:underline px-2 py-1 rounded hover:bg-blue-700">题库</a>
+                        <a href="{{ url_for('quiz.setup') }}" class="hover:underline px-2 py-1 rounded hover:bg-blue-700">练习</a>
+                        <a href="{{ url_for('review.wrong') }}" class="hover:underline px-2 py-1 rounded hover:bg-blue-700">错题本</a>
+                        <a href="{{ url_for('stats.index') }}" class="hover:underline px-2 py-1 rounded hover:bg-blue-700">统计</a>
+                        <a href="{{ url_for('auth.logout') }}" class="hover:underline px-2 py-1 rounded hover:bg-blue-700">登出</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="hover:underline px-2 py-1 rounded hover:bg-blue-700">登录</a>
+                        <a href="{{ url_for('auth.register') }}" class="hover:underline px-2 py-1 rounded hover:bg-blue-700">注册</a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded hover:bg-blue-700" aria-label="菜单">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile nav -->
+            <div id="mobile-menu" class="hidden md:hidden mt-3 pb-2 border-t border-blue-500 pt-3">
                 {% if current_user.is_authenticated %}
-                    <span>{{ current_user.username }}</span>
-                    <a href="{{ url_for('question.list_questions') }}" class="hover:underline">题库</a>
-                    <a href="{{ url_for('quiz.setup') }}" class="hover:underline">练习</a>
-                    <a href="{{ url_for('review.wrong') }}" class="hover:underline">错题本</a>
-                    <a href="{{ url_for('stats.index') }}" class="hover:underline">统计</a>
-                    <a href="{{ url_for('auth.logout') }}" class="hover:underline">登出</a>
+                    <div class="text-blue-100 text-sm mb-2">{{ current_user.username }}</div>
+                    <div class="flex flex-col space-y-2 text-sm">
+                        <a href="{{ url_for('question.list_questions') }}" class="block px-3 py-2 rounded hover:bg-blue-700">题库</a>
+                        <a href="{{ url_for('quiz.setup') }}" class="block px-3 py-2 rounded hover:bg-blue-700">练习</a>
+                        <a href="{{ url_for('review.wrong') }}" class="block px-3 py-2 rounded hover:bg-blue-700">错题本</a>
+                        <a href="{{ url_for('stats.index') }}" class="block px-3 py-2 rounded hover:bg-blue-700">统计</a>
+                        <a href="{{ url_for('auth.logout') }}" class="block px-3 py-2 rounded hover:bg-blue-700">登出</a>
+                    </div>
                 {% else %}
-                    <a href="{{ url_for('auth.login') }}" class="hover:underline">登录</a>
-                    <a href="{{ url_for('auth.register') }}" class="hover:underline">注册</a>
+                    <div class="flex flex-col space-y-2 text-sm">
+                        <a href="{{ url_for('auth.login') }}" class="block px-3 py-2 rounded hover:bg-blue-700">登录</a>
+                        <a href="{{ url_for('auth.register') }}" class="block px-3 py-2 rounded hover:bg-blue-700">注册</a>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6">
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="space-y-2 mb-4">
                     {% for category, message in messages %}
-                        <div class="px-4 py-3 rounded border
+                        <div class="px-4 py-3 rounded border text-sm
                             {% if category == 'danger' %}bg-red-100 border-red-300 text-red-800
                             {% elif category == 'success' %}bg-green-100 border-green-300 text-green-800
                             {% else %}bg-blue-100 border-blue-300 text-blue-800
@@ -61,10 +94,16 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-gray-200 text-center text-sm py-4 text-gray-600">
+    <footer class="bg-gray-200 text-center text-sm py-4 text-gray-600 mt-8">
         QuizMaster · 在线自测练习
     </footer>
 
+    <script>
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -3,32 +3,43 @@
 {% block title %}首页 - QuizMaster{% endblock %}
 
 {% block content %}
-<div class="text-center py-12">
-    <h1 class="text-4xl font-bold text-blue-700 mb-4">QuizMaster</h1>
-    <p class="text-lg text-gray-600 mb-8">在线自测练习平台 · 记录错题 · 统计薄弱点</p>
+<div class="text-center py-8 md:py-12">
+    <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-4">QuizMaster</h1>
+    <p class="text-base md:text-lg text-gray-600 mb-8 px-4">在线自测练习平台 · 记录错题 · 统计薄弱点</p>
 
     {% if current_user.is_authenticated %}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <a href="{{ url_for('quiz.setup') }}" class="bg-white p-6 rounded shadow hover:shadow-lg transition">
-                <div class="text-2xl mb-2">📝</div>
-                <div class="font-bold">开始练习</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto px-4">
+            <a href="{{ url_for('quiz.setup') }}" class="bg-white p-6 md:p-8 rounded shadow hover:shadow-lg transition transform hover:-translate-y-1">
+                <div class="text-3xl md:text-4xl mb-3">📝</div>
+                <div class="font-bold text-lg mb-1">开始练习</div>
                 <div class="text-sm text-gray-500">随机抽题 / 按章节 / 按知识点</div>
             </a>
-            <a href="{{ url_for('question.list_questions') }}" class="bg-white p-6 rounded shadow hover:shadow-lg transition">
-                <div class="text-2xl mb-2">📚</div>
-                <div class="font-bold">管理题库</div>
+            <a href="{{ url_for('question.list_questions') }}" class="bg-white p-6 md:p-8 rounded shadow hover:shadow-lg transition transform hover:-translate-y-1">
+                <div class="text-3xl md:text-4xl mb-3">📚</div>
+                <div class="font-bold text-lg mb-1">管理题库</div>
                 <div class="text-sm text-gray-500">录入、编辑、导入题目</div>
             </a>
-            <a href="{{ url_for('stats.index') }}" class="bg-white p-6 rounded shadow hover:shadow-lg transition">
-                <div class="text-2xl mb-2">📊</div>
-                <div class="font-bold">学习统计</div>
+            <a href="{{ url_for('stats.index') }}" class="bg-white p-6 md:p-8 rounded shadow hover:shadow-lg transition transform hover:-translate-y-1 sm:col-span-2 lg:col-span-1">
+                <div class="text-3xl md:text-4xl mb-3">📊</div>
+                <div class="font-bold text-lg mb-1">学习统计</div>
                 <div class="text-sm text-gray-500">正确率 / 知识点 / 错题本</div>
+            </a>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto px-4">
+            <a href="{{ url_for('review.wrong') }}" class="bg-orange-50 border border-orange-200 p-4 rounded hover:bg-orange-100 transition">
+                <div class="font-medium text-orange-800">错题本</div>
+                <div class="text-sm text-orange-600">复习答错的题目</div>
+            </a>
+            <a href="{{ url_for('review.notes') }}" class="bg-yellow-50 border border-yellow-200 p-4 rounded hover:bg-yellow-100 transition">
+                <div class="font-medium text-yellow-800">我的笔记</div>
+                <div class="text-sm text-yellow-600">查看所有学习笔记</div>
             </a>
         </div>
     {% else %}
         <div class="space-x-4">
-            <a href="{{ url_for('auth.login') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">登录</a>
-            <a href="{{ url_for('auth.register') }}" class="inline-block bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">注册</a>
+            <a href="{{ url_for('auth.login') }}" class="inline-block bg-blue-600 text-white px-8 py-3 rounded hover:bg-blue-700 text-lg">登录</a>
+            <a href="{{ url_for('auth.register') }}" class="inline-block bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg">注册</a>
         </div>
     {% endif %}
 </div>

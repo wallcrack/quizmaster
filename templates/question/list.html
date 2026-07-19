@@ -11,10 +11,10 @@
     </div>
 </div>
 
-<form method="get" class="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+<form method="get" class="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <div>
         <label class="block text-sm font-medium">题型</label>
-        <select name="type" class="w-full border rounded px-2 py-1">
+        <select name="type" class="w-full border rounded px-3 py-2">
             <option value="">全部</option>
             {% for value, label in types %}
                 <option value="{{ value }}" {% if filters.get('type') == value %}selected{% endif %}>{{ label }}</option>
@@ -23,23 +23,23 @@
     </div>
     <div>
         <label class="block text-sm font-medium">章节</label>
-        <input type="text" name="chapter" value="{{ filters.get('chapter', '') }}" class="w-full border rounded px-2 py-1">
+        <input type="text" name="chapter" value="{{ filters.get('chapter', '') }}" class="w-full border rounded px-3 py-2">
     </div>
     <div>
         <label class="block text-sm font-medium">出处</label>
-        <input type="text" name="source" value="{{ filters.get('source', '') }}" class="w-full border rounded px-2 py-1">
+        <input type="text" name="source" value="{{ filters.get('source', '') }}" class="w-full border rounded px-3 py-2">
     </div>
     <div>
         <label class="block text-sm font-medium">标签</label>
-        <select name="tag" class="w-full border rounded px-2 py-1">
+        <select name="tag" class="w-full border rounded px-3 py-2">
             <option value="">全部</option>
             {% for tag in tags %}
                 <option value="{{ tag.name }}" {% if filters.get('tag') == tag.name %}selected{% endif %}>{{ tag.name }}</option>
             {% endfor %}
         </select>
     </div>
-    <div class="md:col-span-4 text-right">
-        <button type="submit" class="bg-gray-600 text-white px-4 py-1 rounded hover:bg-gray-700">筛选</button>
+    <div class="sm:col-span-2 lg:col-span-4 text-right">
+        <button type="submit" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">筛选</button>
     </div>
 </form>
 

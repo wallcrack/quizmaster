@@ -1,3 +1,5 @@
+import os
+import uuid
 from pathlib import Path
 
 from flask import (
@@ -11,12 +13,44 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
+from werkzeug.utils import secure_filename
 
 from extensions import db
 from models import Difficulty, Question, QuestionType, Tag
 from services.import_service import import_questions
 
 bp = Blueprint("question", __name__, url_prefix="/questions")
+
+
+ALLOWED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
+
+
+def allowed_image(filename):
+    return Path(filename).suffix.lower() in ALLOWED_IMAGE_EXTENSIONS
+
+
+def save_image(file):
+    if not file or not file.filename:
+        return None
+    if not allowed_image(file.filename):
+        return None
+
+    ext = Path(file.filename).suffix.lower()
+    filename = f"{uuid.uuid4().hex}{ext}"
+    filepath = Path(current_app.config["UPLOAD_FOLDER"]) / filename
+    file.save(filepath)
+    return filename
+
+
+def delete_image(filename):
+    if not filename:
+        return
+    filepath = Path(current_app.config["UPLOAD_FOLDER"]) / filename
+    if filepath.exists():
+        try:
+            os.remove(filepath)
+        except OSError:
+            pass
 
 
 QUESTION_TYPES = [
@@ -121,6 +155,7 @@ def delete(id):
     question = Question.query.get_or_404(id)
     if question.created_by != current_user.id:
         abort(403)
+    delete_image(question.image)
     db.session.delete(question)
     db.session.commit()
     flash("题目已删除。", "success")
@@ -191,6 +226,20 @@ def _question_from_form(question):
     question.source = source
     question.chapter = chapter
     question.created_by = current_user.id
+
+    # Handle image upload
+    image_file = request.files.get("image")
+    if image_file and image_file.filename:
+        if not allowed_image(image_file.filename):
+            flash("仅支持 png/jpg/jpeg/gif/webp 图片格式。", "danger")
+            return None
+        # Delete old image if replacing
+        if question.image:
+            delete_image(question.image)
+        question.image = save_image(image_file)
+    elif request.form.get("remove_image") == "1":
+        delete_image(question.image)
+        question.image = None
 
     # Update tags
     question.tags = []

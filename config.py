@@ -13,3 +13,9 @@ class Config:
     UPLOAD_FOLDER = BASE_DIR / "static" / "uploads"
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
     QUESTIONS_PER_PAGE = 20
+
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False

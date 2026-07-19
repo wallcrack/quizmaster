@@ -1,6 +1,6 @@
 import json
-from pathlib import Path
 
+import frontmatter
 import yaml
 
 from extensions import db
@@ -15,6 +15,62 @@ def parse_yaml(content):
 def parse_json(content):
     data = json.loads(content)
     return data.get("questions", []) if isinstance(data, dict) else data
+
+
+def parse_markdown(content):
+    """Parse Markdown file with YAML frontmatter blocks.
+
+    Format:
+    ---
+    type: single
+    difficulty: easy
+    ...
+    ---
+    题干内容（支持 Markdown 和 LaTeX）
+
+    Multiple questions are separated by `---` on its own line after content.
+    """
+    questions = []
+    lines = content.split("\n")
+    i = 0
+    n = len(lines)
+
+    while i < n:
+        # Find start of frontmatter
+        while i < n and lines[i].strip() != "---":
+            i += 1
+        if i >= n:
+            break
+
+        doc_start = i
+        i += 1
+
+        # Find end of frontmatter
+        while i < n and lines[i].strip() != "---":
+            i += 1
+        if i >= n:
+            break
+
+        i += 1
+
+        # Find end of content (next --- or EOF)
+        content_start = i
+        while i < n and lines[i].strip() != "---":
+            i += 1
+        content_end = i
+
+        # Parse document
+        doc_lines = lines[doc_start:content_end]
+        doc_text = "\n".join(doc_lines)
+        try:
+            post = frontmatter.loads(doc_text)
+            if post.metadata:
+                post.metadata["content"] = post.content.strip()
+                questions.append(post.metadata)
+        except Exception:
+            pass
+
+    return questions
 
 
 def _normalize_question(raw):
@@ -48,8 +104,10 @@ def import_questions(content, file_extension, user_id):
         items = parse_yaml(content)
     elif file_extension == ".json":
         items = parse_json(content)
+    elif file_extension in (".md", ".markdown"):
+        items = parse_markdown(content)
     else:
-        return 0, ["仅支持 .yaml / .yml / .json 文件"]
+        return 0, ["仅支持 .yaml / .yml / .json / .md 文件"]
 
     if not isinstance(items, list):
         return 0, ["文件格式错误：questions 应为列表"]
@@ -76,6 +134,7 @@ def import_questions(content, file_extension, user_id):
             chapter=data["chapter"],
             created_by=user_id,
         )
+        db.session.add(question)
 
         for tag_name in data["tags"]:
             tag_name = str(tag_name).strip()
@@ -86,10 +145,10 @@ def import_questions(content, file_extension, user_id):
                 if tag is None:
                     tag = Tag(name=tag_name)
                     db.session.add(tag)
+                    db.session.flush()  # Ensure tag has an id before association
                 tag_cache[tag_name] = tag
             question.tags.append(tag_cache[tag_name])
 
-        db.session.add(question)
         created += 1
 
     db.session.commit()

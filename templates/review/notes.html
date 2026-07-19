@@ -19,6 +19,12 @@
                         </div>
                     </div>
 
+                    {% if record.question.image %}
+                        <div class="mb-4">
+                            <img src="{{ url_for('static', filename='uploads/' + record.question.image) }}" alt="题目配图" class="max-w-xs rounded border">
+                        </div>
+                    {% endif %}
+
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-4">
                         <div class="font-medium text-sm mb-1">笔记</div>
                         <div class="text-gray-700">{{ record.note }}</div>
