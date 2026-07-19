@@ -2,7 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from extensions import db
-from models import PracticeSession, Question, QuestionType, Tag
+from models import AnswerRecord, PracticeSession, Question, QuestionType, Tag
 from services import quiz_service
 
 bp = Blueprint("quiz", __name__, url_prefix="/quiz")
@@ -110,7 +110,17 @@ def answer(session_id):
         return redirect(url_for("quiz.setup"))
 
     record_id = request.form.get("record_id", type=int)
-    user_answer = request.form.get("user_answer", "")
+    record = db.session.get(AnswerRecord, record_id)
+    if not record or record.session_id != session.id:
+        flash("无效的答题记录。", "danger")
+        return redirect(url_for("quiz.setup"))
+
+    question = record.question
+    if question.type == QuestionType.multiple:
+        values = request.form.getlist("user_answer")
+        user_answer = ",".join(values)
+    else:
+        user_answer = request.form.get("user_answer", "")
 
     quiz_service.submit_answer(record_id, user_answer)
     return redirect(url_for("quiz.do", session_id=session.id))
