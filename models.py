@@ -58,7 +58,7 @@ class Tag(db.Model):
         "Question", secondary=question_tag, back_populates="tags"
     )
     stats = db.relationship(
-        "UserTagStats", backref="tag", lazy="dynamic",
+        "UserTagStats", back_populates="tag", lazy="dynamic",
         cascade="all, delete-orphan",
     )
 
@@ -149,7 +149,7 @@ class UserTagStats(db.Model):
     last_practiced_at = db.Column(db.DateTime, nullable=True)
 
     user = db.relationship("User", backref="tag_stats")
-    tag = db.relationship("Tag")
+    tag = db.relationship("Tag", back_populates="stats")
 
     __table_args__ = (db.UniqueConstraint("user_id", "tag_id", name="uix_user_tag"),)
 
