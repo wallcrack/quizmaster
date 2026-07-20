@@ -32,8 +32,6 @@ explanation: |
 
 如图所示，冯·诺依曼计算机体系结构的三大核心部件是什么？
 
-![冯·诺依曼架构](cpu_architecture.png)
-
 ---
 type: multiple
 difficulty: medium
@@ -106,8 +104,6 @@ explanation: |
 ---
 
 观察下面的 HTTPS 通信流程图，公钥和私钥分别起什么作用？
-
-![HTTPS 流程图](https_flow.png)
 
 ---
 type: multiple

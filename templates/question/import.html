@@ -21,7 +21,7 @@
                    class="w-full border rounded px-3 py-2 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
             <p class="text-xs text-gray-500 mt-1">
                 支持 PNG / JPG / JPEG / GIF / WebP，可一次选择多张图片。
-                导入文件中用 <code>image: 文件名.png</code> 引用，题干中用 <code>![描述](文件名.png)</code> 显示。
+                导入文件中用 <code>image: 文件名.png</code> 引用，上传图片时请确保文件名一致。
             </p>
         </div>
 
@@ -46,7 +46,7 @@
         <p class="font-medium mt-4 mb-2">带图片的题目示例：</p>
         <pre class="overflow-x-auto">questions:
   - type: single
-    content: "![架构图](cpu_architecture.png)\n如图所示，冯·诺依曼架构的核心部件是？"
+    content: "如图所示，冯·诺依曼架构的核心部件是？"
     options: ["运算器、控制器、存储器", "运算器、输入设备、输出设备"]
     answer: "0"
     image: cpu_architecture.png
@@ -80,8 +80,7 @@ tags: [网络]
         <ul class="list-disc pl-5 mt-1 space-y-1">
             <li>题干和解析支持 <strong>Markdown</strong> 格式</li>
             <li>LaTeX 公式用 <code>$</code> 或 <code>$$</code> 包裹，例如 <code>$E=mc^2$</code></li>
-            <li>导入文件中的 <code>image</code> 字段引用图片文件名</li>
-            <li>题干中用 <code>![描述](文件名.png)</code> 语法内联显示图片</li>
+            <li>导入文件中的 <code>image</code> 字段引用图片文件名，模板自动渲染为配图</li>
             <li>图片先保存到服务器，再导入题目，确保引用有效</li>
         </ul>
     </div>

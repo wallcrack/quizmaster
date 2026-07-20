@@ -15,7 +15,7 @@
   "questions": [
     {
       "type": "single",
-      "content": "如图所示，以下关于 TCP 三次握手过程的描述，正确的是？\n\n![TCP 三次握手](tcp_handshake.png)",
+      "content": "如图所示，以下关于 TCP 三次握手过程的描述，正确的是？",
       "options": [
         "客户端先发送 ACK，再接收 SYN",
         "客户端发送 SYN，服务端回复 SYN+ACK，客户端再发送 ACK",
@@ -32,7 +32,7 @@
     },
     {
       "type": "multiple",
-      "content": "在下面的 Git 工作流图中，哪些操作是将更改从工作区移动到暂存区？\n\n![Git 工作流](git_workflow.png)",
+      "content": "在下面的 Git 工作流图中，哪些操作是将更改从工作区移动到暂存区？",
       "options": [
         "git add",
         "git commit",
@@ -60,7 +60,7 @@
     },
     {
       "type": "subjective",
-      "content": "阅读下面的系统架构图，请分析微服务架构相比单体架构有哪些优缺点？\n\n![微服务架构 vs 单体架构](microservices_vs_monolith.png)",
+      "content": "阅读下面的系统架构图，请分析微服务架构相比单体架构有哪些优缺点？",
       "answer": "微服务架构优点：\n1. 独立部署和扩展\n2. 技术栈灵活\n3. 故障隔离\n4. 团队自治\n\n微服务架构缺点：\n1. 分布式系统复杂度（网络延迟、分布式事务）\n2. 运维成本高\n3. 数据一致性挑战\n4. 调试和测试困难",
       "explanation": "此题考察对系统架构设计的理解，没有标准答案，根据答题的完整性和深度评分。",
       "difficulty": "hard",

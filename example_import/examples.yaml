@@ -23,8 +23,6 @@ questions:
   - type: single
     content: |
       如图所示，以下哪个是 Python 的 logo？
-
-      ![Python Logo](python_logo.png)
     options:
       - 两条蛇缠绕的蓝色图标
       - 一个咖啡杯图标
@@ -46,8 +44,6 @@ questions:
   - type: multiple
     content: |
       观察下面的网络拓扑图，哪些设备属于网络层设备？
-
-      ![网络拓扑图](network_topology.png)
     options:
       - 路由器
       - 交换机
