@@ -79,7 +79,10 @@ class Question(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     tags = db.relationship("Tag", secondary=question_tag, back_populates="questions")
-    records = db.relationship("AnswerRecord", backref="question", lazy="dynamic")
+    records = db.relationship(
+        "AnswerRecord", backref="question", lazy="dynamic",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<Question {self.id} {self.type.value}>"
