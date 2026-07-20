@@ -57,6 +57,10 @@ class Tag(db.Model):
     questions = db.relationship(
         "Question", secondary=question_tag, back_populates="tags"
     )
+    stats = db.relationship(
+        "UserTagStats", backref="tag", lazy="dynamic",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<Tag {self.name}>"

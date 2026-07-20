@@ -176,6 +176,14 @@ def delete(id):
     delete_image(question.image)
     db.session.delete(question)
     db.session.commit()
+
+    # 清理无关联题目的空标签
+    orphan_tags = Tag.query.filter(~Tag.questions.any()).all()
+    for tag in orphan_tags:
+        db.session.delete(tag)
+    if orphan_tags:
+        db.session.commit()
+
     flash("题目已删除。", "success")
     return redirect(url_for("question.list_questions"))
 
