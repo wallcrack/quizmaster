@@ -82,4 +82,16 @@ def create_app(config_class=Config):
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    import os
+    from waitress import serve
+
+    host = app.config.get("HOST", "::")
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+
+    if debug:
+        app.run(host=host, port=port, debug=True)
+    else:
+        # waitress 绑定 :: 时支持 IPv4/IPv6 双栈
+        print(f" * Serving on http://[{host}]:{port}/ (IPv4/IPv6 dual-stack)")
+        serve(app, host=host, port=port)
