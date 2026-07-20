@@ -1,0 +1,160 @@
+# ============================================================
+# QuizMaster 题目导入示例 — YAML 格式
+#
+# 支持字段:
+#   type:       single | multiple | true_false | subjective
+#   content:    题干 (支持 Markdown / LaTeX)
+#   options:    选项列表 (选择题必填)
+#   answer:     正确答案: 单选用索引 "0", 多选用 "0,1", 判断用 "true"/"false"
+#   explanation: 解析 (可选)
+#   difficulty: easy | medium | hard
+#   source:     来源/书籍名称 (可选)
+#   chapter:    章节 (可选)
+#   tags:       标签列表
+#   image:      图片文件名 (需上传至 static/uploads/, 可选)
+#
+# 用法: 在题目管理页面上传此文件即可批量导入
+# ============================================================
+
+questions:
+  # --------------------------------------------------
+  # 1. 单选题 — 附带图片
+  # --------------------------------------------------
+  - type: single
+    content: |
+      如图所示，以下哪个是 Python 的 logo？
+
+      ![Python Logo](python_logo.png)
+    options:
+      - 两条蛇缠绕的蓝色图标
+      - 一个咖啡杯图标
+      - 一个大象图标
+      - 一个骆驼图标
+    answer: "0"
+    explanation: |
+      Python 的 logo 是两条蓝色和黄色的蛇（Python）缠绕在一起。
+      详见 [Python 官网](https://www.python.org/).
+    difficulty: easy
+    source: Python 基础教程
+    chapter: 第1章 认识 Python
+    tags: [python, 基础, 图片题]
+    image: python_logo.png
+
+  # --------------------------------------------------
+  # 2. 多选题 — 附带图片
+  # --------------------------------------------------
+  - type: multiple
+    content: |
+      观察下面的网络拓扑图，哪些设备属于网络层设备？
+
+      ![网络拓扑图](network_topology.png)
+    options:
+      - 路由器
+      - 交换机
+      - 集线器
+      - 三层交换机
+    answer: "0,3"
+    explanation: |
+      路由器工作在网络层（第3层），三层交换机也具有网络层功能。
+      交换机和集线器工作在数据链路层（第2层）和物理层（第1层）。
+    difficulty: medium
+    source: 计算机网络
+    chapter: 第4章 网络层
+    tags: [计算机网络, 网络层, 图片题]
+    image: network_topology.png
+
+  # --------------------------------------------------
+  # 3. 判断题 — 无图片
+  # --------------------------------------------------
+  - type: true_false
+    content: |
+      在 Python 中，列表（list）和元组（tuple）都是可变数据类型。
+    options:
+      - "正确"
+      - "错误"
+    answer: "1"
+    explanation: |
+      列表（list）是可变的，但元组（tuple）是不可变的。
+      元组一旦创建就不能修改、添加或删除元素。
+    difficulty: easy
+    source: Python 基础教程
+    chapter: 第3章 数据结构
+    tags: [python, 数据结构]
+
+  # --------------------------------------------------
+  # 4. 主观题 — 附带数学公式 (LaTeX)
+  # --------------------------------------------------
+  - type: subjective
+    content: |
+      请简要证明欧拉公式：
+
+      $$e^{i\pi} + 1 = 0$$
+
+      并说明该公式为什么被称为"最美的数学公式"。
+    answer: |
+      欧拉公式的证明：
+
+      由泰勒展开：$e^{ix} = \cos x + i\sin x$
+
+      代入 $x = \pi$：
+      $$e^{i\pi} = \cos \pi + i\sin \pi = -1 + 0i = -1$$
+
+      因此 $e^{i\pi} + 1 = 0$。
+
+      该公式被称为最美的数学公式，因为它将数学中五个最重要的常数
+      （$e$, $i$, $\pi$, $1$, $0$）联系在了一起。
+    explanation: 考察对欧拉公式的理解和数学推导能力。
+    difficulty: hard
+    source: 高等数学
+    chapter: 第5章 复数与欧拉公式
+    tags: [数学, 欧拉公式, LaTeX]
+
+  # --------------------------------------------------
+  # 5. 单选题 — 代码题
+  # --------------------------------------------------
+  - type: single
+    content: |
+      阅读以下 Python 代码，输出结果是什么？
+
+      ```python
+      def fibonacci(n):
+          if n <= 1:
+              return n
+          return fibonacci(n-1) + fibonacci(n-2)
+
+      print(fibonacci(6))
+      ```
+    options:
+      - "5"
+      - "6"
+      - "8"
+      - "13"
+    answer: "2"
+    explanation: |
+      fibonacci(6) 的计算过程：
+      fib(0)=0, fib(1)=1, fib(2)=1, fib(3)=2,
+      fib(4)=3, fib(5)=5, fib(6)=8
+    difficulty: medium
+    source: Python 算法入门
+    chapter: 第2章 递归
+    tags: [python, 算法, 递归, 代码题]
+
+  # --------------------------------------------------
+  # 6. 多选题 — 带来源和章节
+  # --------------------------------------------------
+  - type: multiple
+    content: |
+      下面哪些是 Python 的内置数据类型？
+    options:
+      - int
+      - float
+      - array
+      - dict
+    answer: "0,1,3"
+    explanation: |
+      int、float、dict 都是 Python 内置类型。
+      array 不是内置类型，需要从 array 模块导入。
+    difficulty: easy
+    source: Python 基础教程
+    chapter: 第2章 基本数据类型
+    tags: [python, 基础, 数据类型]

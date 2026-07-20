@@ -1,0 +1,105 @@
+{
+  "_说明": "QuizMaster 题目导入示例 — JSON 格式。用法: 在题目管理页面上传此文件即可批量导入。",
+  "_字段": {
+    "type": "single | multiple | true_false | subjective",
+    "content": "题干（支持 Markdown / LaTeX）",
+    "options": "选项列表（选择题必填）",
+    "answer": "正确答案：单选用索引 \"0\"，多选用 \"0,1\"，判断用 \"true\"/\"false\"",
+    "explanation": "解析（可选）",
+    "difficulty": "easy | medium | hard",
+    "source": "来源/书籍名称（可选）",
+    "chapter": "章节（可选）",
+    "tags": "标签列表",
+    "image": "图片文件名（需上传至 static/uploads/，可选）"
+  },
+  "questions": [
+    {
+      "type": "single",
+      "content": "如图所示，以下关于 TCP 三次握手过程的描述，正确的是？\n\n![TCP 三次握手](tcp_handshake.png)",
+      "options": [
+        "客户端先发送 ACK，再接收 SYN",
+        "客户端发送 SYN，服务端回复 SYN+ACK，客户端再发送 ACK",
+        "服务端直接发送数据包建立连接",
+        "客户端发送 FIN 建立连接"
+      ],
+      "answer": "1",
+      "explanation": "TCP 三次握手流程：\n1. 客户端 → 服务端：SYN\n2. 服务端 → 客户端：SYN + ACK\n3. 客户端 → 服务端：ACK\n\n握手完成后连接建立，可以开始传输数据。",
+      "difficulty": "easy",
+      "source": "计算机网络",
+      "chapter": "第6章 传输层",
+      "tags": ["计算机网络", "TCP", "图片题"],
+      "image": "tcp_handshake.png"
+    },
+    {
+      "type": "multiple",
+      "content": "在下面的 Git 工作流图中，哪些操作是将更改从工作区移动到暂存区？\n\n![Git 工作流](git_workflow.png)",
+      "options": [
+        "git add",
+        "git commit",
+        "git push",
+        "git stage"
+      ],
+      "answer": "0,3",
+      "explanation": "git add 和 git stage 都是将更改从工作区添加到暂存区的命令。\ngit commit 是将暂存区内容提交到本地仓库。\ngit push 是将本地仓库推送到远程仓库。",
+      "difficulty": "medium",
+      "source": "Git 版本控制",
+      "chapter": "第2章 基本操作",
+      "tags": ["git", "版本控制", "图片题"],
+      "image": "git_workflow.png"
+    },
+    {
+      "type": "true_false",
+      "content": "在 Python 中，`is` 运算符用于比较两个对象的值是否相等。",
+      "options": ["正确", "错误"],
+      "answer": "false",
+      "explanation": "`is` 比较的是两个对象的内存地址（身份），而 `==` 比较的是两个对象的值。\n例如：`a = [1,2]; b = [1,2]; print(a is b)` 输出 `False`，但 `a == b` 输出 `True`。",
+      "difficulty": "easy",
+      "source": "Python 进阶",
+      "chapter": "第1章 对象与引用",
+      "tags": ["python", "进阶"]
+    },
+    {
+      "type": "subjective",
+      "content": "阅读下面的系统架构图，请分析微服务架构相比单体架构有哪些优缺点？\n\n![微服务架构 vs 单体架构](microservices_vs_monolith.png)",
+      "answer": "微服务架构优点：\n1. 独立部署和扩展\n2. 技术栈灵活\n3. 故障隔离\n4. 团队自治\n\n微服务架构缺点：\n1. 分布式系统复杂度（网络延迟、分布式事务）\n2. 运维成本高\n3. 数据一致性挑战\n4. 调试和测试困难",
+      "explanation": "此题考察对系统架构设计的理解，没有标准答案，根据答题的完整性和深度评分。",
+      "difficulty": "hard",
+      "source": "系统设计面试指南",
+      "chapter": "第8章 微服务架构",
+      "tags": ["系统设计", "微服务", "架构", "图片题"],
+      "image": "microservices_vs_monolith.png"
+    },
+    {
+      "type": "single",
+      "content": "以下 SQL 查询语句中，哪一条能够正确查询每个部门的平均薪资？\n\n```sql\n-- 表结构:\n-- employees(id, name, salary, department_id)\n-- departments(id, name)\n```",
+      "options": [
+        "SELECT d.name, AVG(e.salary) FROM departments d JOIN employees e ON d.id = e.department_id",
+        "SELECT d.name, AVG(e.salary) FROM departments d WHERE d.id = e.department_id",
+        "SELECT d.name, AVG(e.salary) FROM departments d JOIN employees e WHERE d.id = e.department_id",
+        "SELECT d.name, AVG(e.salary) FROM departments d, employees e"
+      ],
+      "answer": "0",
+      "explanation": "选项1使用正确的 JOIN ON 语法连接两表，AVG 聚合函数配合 GROUP BY 可以计算每个部门的平均薪资。\n选项2缺少 FROM employees，选项3语法不正确，选项4缺少连接条件和 GROUP BY。",
+      "difficulty": "medium",
+      "source": "数据库基础",
+      "chapter": "第5章 SQL 高级查询",
+      "tags": ["SQL", "数据库", "代码题"]
+    },
+    {
+      "type": "multiple",
+      "content": "以下哪些是 CSS 中有效的长度单位？",
+      "options": [
+        "px",
+        "em",
+        "rem",
+        "dp"
+      ],
+      "answer": "0,1,2",
+      "explanation": "px（像素）、em（相对于父元素字体大小）、rem（相对于根元素字体大小）都是 CSS 有效单位。\ndp 是 Android 开发中的密度无关像素，不是 CSS 单位。",
+      "difficulty": "easy",
+      "source": "前端开发基础",
+      "chapter": "第3章 CSS 基础",
+      "tags": ["CSS", "前端"]
+    }
+  ]
+}
