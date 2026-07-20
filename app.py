@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import bleach
@@ -62,6 +63,12 @@ def create_app(config_class=Config):
             tags=allowed_tags,
             attributes=allowed_attributes,
             strip=True,
+        )
+        # 自动将裸文件名图片路径改写为 /static/uploads/
+        cleaned = re.sub(
+            r'<img([^>]*?) src="(?!https?://|/|data:)([^"]+)"',
+            r'<img\1 src="/static/uploads/\2"',
+            cleaned,
         )
         return Markup(cleaned)
 
