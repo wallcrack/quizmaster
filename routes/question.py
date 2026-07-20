@@ -110,6 +110,8 @@ def list_questions():
     )
 
     tags = Tag.query.order_by(Tag.name).all()
+    # 排除 page 参数，避免分页链接中 page 重复
+    filters = {k: v for k, v in request.args.items() if k != "page"}
     return render_template(
         "question/list.html",
         questions=pagination.items,
@@ -117,7 +119,7 @@ def list_questions():
         types=QUESTION_TYPES,
         difficulties=DIFFICULTIES,
         tags=tags,
-        filters=request.args,
+        filters=filters,
     )
 
 
