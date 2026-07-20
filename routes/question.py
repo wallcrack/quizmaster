@@ -30,6 +30,7 @@ def allowed_image(filename):
 
 
 def save_image(file):
+    """保存图片（UUID 哈希命名，适用于单题表单上传）。"""
     if not file or not file.filename:
         return None
     if not allowed_image(file.filename):
@@ -37,6 +38,21 @@ def save_image(file):
 
     ext = Path(file.filename).suffix.lower()
     filename = f"{uuid.uuid4().hex}{ext}"
+    filepath = Path(current_app.config["UPLOAD_FOLDER"]) / filename
+    file.save(filepath)
+    return filename
+
+
+def save_image_keep_name(file):
+    """保存图片（保留原始文件名，适用于批量导入场景）。"""
+    if not file or not file.filename:
+        return None
+    if not allowed_image(file.filename):
+        return None
+
+    filename = secure_filename(file.filename)
+    if not filename:
+        return None
     filepath = Path(current_app.config["UPLOAD_FOLDER"]) / filename
     file.save(filepath)
     return filename
@@ -171,17 +187,17 @@ def import_page():
             flash("请选择导入文件。", "danger")
             return redirect(url_for("question.import_page"))
 
-        # 1. 批量保存上传的图片
+        # 1. 批量保存上传的图片（保留原始文件名，与导入文件中的引用一致）
         saved_images = []
         image_files = request.files.getlist("images")
         for img_file in image_files:
             if img_file and img_file.filename:
-                filename = save_image(img_file)
+                filename = save_image_keep_name(img_file)
                 if filename:
-                    saved_images.append((img_file.filename, filename))
+                    saved_images.append(filename)
 
         if saved_images:
-            names = ", ".join(orig for orig, _ in saved_images)
+            names = ", ".join(saved_images)
             flash(f"已保存 {len(saved_images)} 张图片：{names}", "info")
 
         # 2. 解析并导入题目
