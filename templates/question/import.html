@@ -7,12 +7,27 @@
     <h1 class="text-2xl font-bold mb-6">导入题库</h1>
 
     <form method="post" enctype="multipart/form-data" class="space-y-4">
+        <!-- 导入数据文件 -->
         <div>
-            <label class="block text-sm font-medium mb-1">选择 YAML / JSON / Markdown 文件</label>
-            <input type="file" name="file" accept=".yaml,.yml,.json,.md,.markdown" required class="w-full border rounded px-3 py-2">
+            <label class="block text-sm font-medium mb-1">选择 YAML / JSON / Markdown 文件 <span class="text-red-500">*</span></label>
+            <input type="file" name="file" accept=".yaml,.yml,.json,.md,.markdown" required
+                   class="w-full border rounded px-3 py-2 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
         </div>
 
-        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">导入</button>
+        <!-- 批量上传图片 -->
+        <div>
+            <label class="block text-sm font-medium mb-1">批量上传图片（可选）</label>
+            <input type="file" name="images" accept=".png,.jpg,.jpeg,.gif,.webp" multiple
+                   class="w-full border rounded px-3 py-2 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            <p class="text-xs text-gray-500 mt-1">
+                支持 PNG / JPG / JPEG / GIF / WebP，可一次选择多张图片。
+                导入文件中用 <code>image: 文件名.png</code> 引用，题干中用 <code>![描述](文件名.png)</code> 显示。
+            </p>
+        </div>
+
+        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">
+            导入
+        </button>
     </form>
 
     <div class="mt-6 text-sm text-gray-600 bg-gray-50 p-4 rounded">
@@ -27,6 +42,15 @@
     source: "Python Cookbook"
     chapter: "第 2 章"
     tags: ["python", "语法"]</pre>
+
+        <p class="font-medium mt-4 mb-2">带图片的题目示例：</p>
+        <pre class="overflow-x-auto">questions:
+  - type: single
+    content: "![架构图](cpu_architecture.png)\n如图所示，冯·诺依曼架构的核心部件是？"
+    options: ["运算器、控制器、存储器", "运算器、输入设备、输出设备"]
+    answer: "0"
+    image: cpu_architecture.png
+    tags: ["计算机基础"]</pre>
 
         <p class="font-medium mt-4 mb-2">Markdown 格式示例：</p>
         <pre class="overflow-x-auto">---
@@ -54,8 +78,11 @@ tags: [网络]
 </pre>
         <p class="mt-3 font-medium">说明：</p>
         <ul class="list-disc pl-5 mt-1 space-y-1">
-            <li>题干和解析支持 Markdown 格式</li>
-            <li>LaTeX 公式用 $ 或 $$ 包裹，例如 $E=mc^2$</li>
+            <li>题干和解析支持 <strong>Markdown</strong> 格式</li>
+            <li>LaTeX 公式用 <code>$</code> 或 <code>$$</code> 包裹，例如 <code>$E=mc^2$</code></li>
+            <li>导入文件中的 <code>image</code> 字段引用图片文件名</li>
+            <li>题干中用 <code>![描述](文件名.png)</code> 语法内联显示图片</li>
+            <li>图片先保存到服务器，再导入题目，确保引用有效</li>
         </ul>
     </div>
 </div>

@@ -92,6 +92,7 @@ def _normalize_question(raw):
         "source": raw.get("source") or None,
         "chapter": raw.get("chapter") or None,
         "tags": raw.get("tags") or [],
+        "image": raw.get("image") or None,
     }
 
 
@@ -132,6 +133,7 @@ def import_questions(content, file_extension, user_id):
             difficulty=data["difficulty"],
             source=data["source"],
             chapter=data["chapter"],
+            image=data["image"],
             created_by=user_id,
         )
         db.session.add(question)

@@ -168,9 +168,23 @@ def import_page():
     if request.method == "POST":
         file = request.files.get("file")
         if not file or not file.filename:
-            flash("请选择文件。", "danger")
+            flash("请选择导入文件。", "danger")
             return redirect(url_for("question.import_page"))
 
+        # 1. 批量保存上传的图片
+        saved_images = []
+        image_files = request.files.getlist("images")
+        for img_file in image_files:
+            if img_file and img_file.filename:
+                filename = save_image(img_file)
+                if filename:
+                    saved_images.append((img_file.filename, filename))
+
+        if saved_images:
+            names = ", ".join(orig for orig, _ in saved_images)
+            flash(f"已保存 {len(saved_images)} 张图片：{names}", "info")
+
+        # 2. 解析并导入题目
         ext = Path(file.filename).suffix.lower()
         content = file.read().decode("utf-8")
         created, errors = import_questions(content, ext, current_user.id)
