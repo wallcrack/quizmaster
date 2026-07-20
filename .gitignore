@@ -13,7 +13,8 @@ dist/
 .pytest_cache/
 
 # Flask
-instance/
+instance/*
+!instance/.gitkeep
 .env
 
 # Uploads
