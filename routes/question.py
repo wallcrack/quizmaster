@@ -225,10 +225,53 @@ def batch_delete():
 @login_required
 def preview(id):
     question = Question.query.get_or_404(id)
+
+    # 构建与列表页相同的筛选查询，用于连续预览翻题
+    query = Question.query
+
+    qtype = request.args.get("type")
+    if qtype:
+        query = query.filter(Question.type == QuestionType(qtype))
+
+    chapter = request.args.get("chapter", "").strip()
+    if chapter:
+        query = query.filter(Question.chapter == chapter)
+
+    source = request.args.get("source", "").strip()
+    if source:
+        query = query.filter(Question.source == source)
+
+    tag_name = request.args.get("tag", "").strip()
+    if tag_name:
+        query = query.join(Question.tags).filter(Tag.name == tag_name)
+
+    # 获取筛选后的题目 ID 列表（与列表页同序）
+    filtered_ids = [
+        r[0] for r in
+        query.order_by(Question.id.desc()).with_entities(Question.id).all()
+    ]
+
+    # 保留筛选参数用于导航链接
+    filters = {k: v for k, v in request.args.items()}
+
+    # 查找当前题目在筛选结果中的位置
+    try:
+        idx = filtered_ids.index(id)
+    except ValueError:
+        idx = -1
+
+    prev_id = filtered_ids[idx - 1] if idx > 0 else None
+    next_id = filtered_ids[idx + 1] if idx >= 0 and idx < len(filtered_ids) - 1 else None
+
     return render_template(
         "question/preview.html",
         question=question,
         types=QUESTION_TYPES,
+        prev_id=prev_id,
+        next_id=next_id,
+        filters=filters,
+        current_index=idx + 1 if idx >= 0 else 0,
+        total=len(filtered_ids),
     )
 
 

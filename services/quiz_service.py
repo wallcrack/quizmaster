@@ -1,7 +1,7 @@
 import datetime
 from itertools import chain
 
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 from extensions import db
 from models import (
@@ -41,17 +41,17 @@ def start_session(user_id, mode, config):
             query = query.filter(Question.chapter == chapter)
     elif mode_enum == PracticeMode.wrong:
         # Load recent wrong answers (objective wrong or subjective < 60)
-        wrong_subquery = (
-            db.session.query(AnswerRecord.question_id)
-            .filter(AnswerRecord.session.has(user_id=user_id))
-            .filter(
+        wrong_ids = (
+            select(AnswerRecord.question_id)
+            .where(AnswerRecord.session.has(user_id=user_id))
+            .where(
                 (AnswerRecord.is_correct == False)
                 | (AnswerRecord.self_evaluation < 60)
             )
             .distinct()
-            .subquery()
+            .scalar_subquery()
         )
-        query = query.filter(Question.id.in_(wrong_subquery))
+        query = query.filter(Question.id.in_(wrong_ids))
 
     questions = query.order_by(func.random()).limit(count).all()
 

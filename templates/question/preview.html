@@ -9,8 +9,21 @@
             {% for value, label in types %}{% if value == question.type.value %}{{ label }}{% endif %}{% endfor %}
             {% if question.chapter %} · {{ question.chapter }}{% endif %}
             {% if question.source %} · {{ question.source }}{% endif %}
+            {% if total > 0 %} · 第 {{ current_index }} / {{ total }} 题{% endif %}
         </div>
-        <a href="{{ url_for('question.list_questions') }}" class="text-sm text-blue-600 hover:underline">← 返回题库</a>
+        <div class="flex items-center space-x-2">
+            {% if prev_id %}
+            <a href="{{ url_for('question.preview', id=prev_id, **filters) }}" class="text-sm bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">← 上一题</a>
+            {% else %}
+            <span class="text-sm bg-gray-100 px-3 py-1 rounded text-gray-400">← 上一题</span>
+            {% endif %}
+            {% if next_id %}
+            <a href="{{ url_for('question.preview', id=next_id, **filters) }}" class="text-sm bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">下一题 →</a>
+            {% else %}
+            <span class="text-sm bg-gray-100 px-3 py-1 rounded text-gray-400">下一题 →</span>
+            {% endif %}
+            <a href="{{ url_for('question.list_questions', **filters) if filters else url_for('question.list_questions') }}" class="text-sm text-blue-600 hover:underline ml-2">返回题库</a>
+        </div>
     </div>
 
     <div class="bg-white p-6 rounded shadow mb-4">
@@ -77,7 +90,7 @@
     {% endif %}
 
     <div class="flex space-x-3">
-        <a href="{{ url_for('question.list_questions') }}" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">返回题库</a>
+        <a href="{{ url_for('question.list_questions', **filters) if filters else url_for('question.list_questions') }}" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">返回题库</a>
         <a href="{{ url_for('question.edit', id=question.id) }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">编辑此题</a>
     </div>
 </div>

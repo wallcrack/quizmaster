@@ -79,7 +79,7 @@
                                 <span class="line-clamp-2">{{ q.content | truncate(120) }}</span>
                             </div>
                             <div class="flex space-x-2 text-sm shrink-0">
-                                <a href="{{ url_for('question.preview', id=q.id) }}" class="text-green-600 hover:underline whitespace-nowrap" target="_blank">预览</a>
+                                <a href="{{ url_for('question.preview', id=q.id, **filters) }}" class="text-green-600 hover:underline whitespace-nowrap" target="_blank">预览</a>
                                 <a href="{{ url_for('question.edit', id=q.id) }}" class="text-blue-600 hover:underline whitespace-nowrap">编辑</a>
                                 <form method="post" action="{{ url_for('question.delete', id=q.id) }}" onsubmit="return confirm('确定删除？');" class="inline">
                                     <button type="submit" class="text-red-600 hover:underline whitespace-nowrap">删除</button>
