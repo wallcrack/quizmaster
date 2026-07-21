@@ -84,7 +84,14 @@
                 </div>
             </div>
         {% else %}
-            <div class="text-center text-gray-500 py-8">暂无题目，请先<a href="{{ url_for('question.create') }}" class="text-blue-600 hover:underline">新建</a>。</div>
+            {% if has_filter %}
+                <div class="text-center text-gray-500 py-8">未找到匹配的题目。</div>
+            {% else %}
+                <div class="text-center text-gray-400 py-16">
+                    <p class="text-lg mb-2">请使用上方筛选条件查找题目</p>
+                    <p class="text-sm">可按题型、章节、出处或标签进行筛选</p>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 </form>

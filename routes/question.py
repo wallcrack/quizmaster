@@ -105,21 +105,31 @@ def list_questions():
         query = query.join(Question.tags).filter(Tag.name == tag_name)
 
     page = request.args.get("page", 1, type=int)
-    pagination = query.order_by(Question.id.desc()).paginate(
-        page=page, per_page=current_app.config["QUESTIONS_PER_PAGE"], error_out=False
-    )
 
-    tags = Tag.query.order_by(Tag.name).all()
     # 排除 page 参数，避免分页链接中 page 重复
     filters = {k: v for k, v in request.args.items() if k != "page"}
+    # 检查是否有筛选项（排除 page 后的非空参数）
+    has_filter = any(v for k, v in request.args.items() if k != "page")
+
+    if has_filter:
+        pagination = query.order_by(Question.id.desc()).paginate(
+            page=page, per_page=current_app.config["QUESTIONS_PER_PAGE"], error_out=False
+        )
+        questions = pagination.items
+    else:
+        pagination = None
+        questions = []
+
+    tags = Tag.query.order_by(Tag.name).all()
     return render_template(
         "question/list.html",
-        questions=pagination.items,
+        questions=questions,
         pagination=pagination,
         types=QUESTION_TYPES,
         difficulties=DIFFICULTIES,
         tags=tags,
         filters=filters,
+        has_filter=has_filter,
     )
 
 
