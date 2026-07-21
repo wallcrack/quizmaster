@@ -33,12 +33,22 @@
         </select>
     </div>
     <div>
-        <label class="block text-sm font-medium">章节</label>
-        <input type="text" name="chapter" value="{{ filters.get('chapter', '') }}" class="w-full border rounded px-3 py-2">
+        <label class="block text-sm font-medium">出处</label>
+        <select name="source" class="w-full border rounded px-3 py-2">
+            <option value="">全部</option>
+            {% for src in all_sources %}
+                <option value="{{ src }}" {% if filters.get('source') == src %}selected{% endif %}>{{ src }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div>
-        <label class="block text-sm font-medium">出处</label>
-        <input type="text" name="source" value="{{ filters.get('source', '') }}" class="w-full border rounded px-3 py-2">
+        <label class="block text-sm font-medium">章节</label>
+        <select name="chapter" class="w-full border rounded px-3 py-2">
+            <option value="">全部</option>
+            {% for ch in all_chapters %}
+                <option value="{{ ch }}" {% if filters.get('chapter') == ch %}selected{% endif %}>{{ ch }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div>
         <label class="block text-sm font-medium">标签</label>

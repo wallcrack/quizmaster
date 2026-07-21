@@ -94,11 +94,11 @@ def list_questions():
 
     chapter = request.args.get("chapter", "").strip()
     if chapter:
-        query = query.filter(Question.chapter.ilike(f"%{chapter}%"))
+        query = query.filter(Question.chapter == chapter)
 
     source = request.args.get("source", "").strip()
     if source:
-        query = query.filter(Question.source.ilike(f"%{source}%"))
+        query = query.filter(Question.source == source)
 
     tag_name = request.args.get("tag", "").strip()
     if tag_name:
@@ -121,6 +121,14 @@ def list_questions():
         questions = []
 
     tags = Tag.query.order_by(Tag.name).all()
+    all_sources = [
+        r[0] for r in
+        db.session.query(Question.source).filter(Question.source.isnot(None), Question.source != "").distinct().order_by(Question.source).all()
+    ]
+    all_chapters = [
+        r[0] for r in
+        db.session.query(Question.chapter).filter(Question.chapter.isnot(None), Question.chapter != "").distinct().order_by(Question.chapter).all()
+    ]
     return render_template(
         "question/list.html",
         questions=questions,
@@ -128,6 +136,8 @@ def list_questions():
         types=QUESTION_TYPES,
         difficulties=DIFFICULTIES,
         tags=tags,
+        all_sources=all_sources,
+        all_chapters=all_chapters,
         filters=filters,
         has_filter=has_filter,
     )
