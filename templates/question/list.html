@@ -11,6 +11,17 @@
     </div>
 </div>
 
+{% if questions %}
+<div id="batch-bar" class="bg-gray-100 p-2 rounded mb-4 flex items-center space-x-4 text-sm" style="display:none">
+    <label class="flex items-center space-x-1 cursor-pointer">
+        <input type="checkbox" id="select-all" onchange="toggleSelectAll()" class="h-4 w-4">
+        <span>全选</span>
+    </label>
+    <span id="selected-count" class="text-gray-600">已选 0 道</span>
+    <button type="button" onclick="batchDelete()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">删除选中</button>
+</div>
+{% endif %}
+
 <form method="get" class="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <div>
         <label class="block text-sm font-medium">题型</label>
@@ -43,33 +54,40 @@
     </div>
 </form>
 
-<div class="space-y-3">
-    {% for q in questions %}
-        <div class="bg-white p-4 rounded shadow">
-            <div class="flex justify-between items-start">
-                <div class="font-medium">
-                    <span class="text-xs bg-gray-200 px-2 py-0.5 rounded mr-2">
-                        {% for value, label in types %}{% if value == q.type.value %}{{ label }}{% endif %}{% endfor %}
-                    </span>
-                    {{ q.content | truncate(120) }}
-                </div>
-                <div class="flex space-x-2 text-sm">
-                    <a href="{{ url_for('question.edit', id=q.id) }}" class="text-blue-600 hover:underline">编辑</a>
-                    <form method="post" action="{{ url_for('question.delete', id=q.id) }}" onsubmit="return confirm('确定删除？');">
-                        <button type="submit" class="text-red-600 hover:underline">删除</button>
-                    </form>
+<form id="batch-form" method="post" action="{{ url_for('question.batch_delete') }}">
+    <div class="space-y-3">
+        {% for q in questions %}
+            <div class="bg-white p-4 rounded shadow">
+                <div class="flex items-start">
+                    <input type="checkbox" name="ids" value="{{ q.id }}" class="mt-1 mr-3 h-4 w-4 question-checkbox">
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <div class="font-medium">
+                                <span class="text-xs bg-gray-200 px-2 py-0.5 rounded mr-2">
+                                    {% for value, label in types %}{% if value == q.type.value %}{{ label }}{% endif %}{% endfor %}
+                                </span>
+                                {{ q.content | truncate(120) }}
+                            </div>
+                            <div class="flex space-x-2 text-sm">
+                                <a href="{{ url_for('question.edit', id=q.id) }}" class="text-blue-600 hover:underline">编辑</a>
+                                <form method="post" action="{{ url_for('question.delete', id=q.id) }}" onsubmit="return confirm('确定删除？');" class="inline">
+                                    <button type="submit" class="text-red-600 hover:underline">删除</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-2">
+                            {% if q.chapter %}章节: {{ q.chapter }} {% endif %}
+                            {% if q.source %}出处: {{ q.source }} {% endif %}
+                            {% if q.tags %}标签: {% for t in q.tags %}<span class="bg-blue-100 text-blue-800 px-1 rounded">{{ t.name }}</span> {% endfor %}{% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="text-sm text-gray-500 mt-2">
-                {% if q.chapter %}章节: {{ q.chapter }} {% endif %}
-                {% if q.source %}出处: {{ q.source }} {% endif %}
-                {% if q.tags %}标签: {% for t in q.tags %}<span class="bg-blue-100 text-blue-800 px-1 rounded">{{ t.name }}</span> {% endfor %}{% endif %}
-            </div>
-        </div>
-    {% else %}
-        <div class="text-center text-gray-500 py-8">暂无题目，请先<a href="{{ url_for('question.create') }}" class="text-blue-600 hover:underline">新建</a>。</div>
-    {% endfor %}
-</div>
+        {% else %}
+            <div class="text-center text-gray-500 py-8">暂无题目，请先<a href="{{ url_for('question.create') }}" class="text-blue-600 hover:underline">新建</a>。</div>
+        {% endfor %}
+    </div>
+</form>
 
 {% if pagination.pages > 1 %}
 <div class="flex justify-center space-x-2 mt-6">
@@ -82,4 +100,41 @@
     {% endif %}
 </div>
 {% endif %}
+
+<script>
+var checkboxes = document.querySelectorAll('.question-checkbox');
+var batchBar = document.getElementById('batch-bar');
+var selectAll = document.getElementById('select-all');
+var selectedCount = document.getElementById('selected-count');
+
+checkboxes.forEach(function(cb) {
+    cb.addEventListener('change', updateBatchBar);
+});
+
+function updateBatchBar() {
+    var checked = document.querySelectorAll('.question-checkbox:checked');
+    var count = checked.length;
+    if (count > 0) {
+        batchBar.style.display = 'flex';
+        selectedCount.textContent = '已选 ' + count + ' 道';
+        selectAll.checked = count === checkboxes.length;
+    } else {
+        batchBar.style.display = 'none';
+        selectAll.checked = false;
+    }
+}
+
+function toggleSelectAll() {
+    var checked = selectAll.checked;
+    checkboxes.forEach(function(cb) { cb.checked = checked; });
+    updateBatchBar();
+}
+
+function batchDelete() {
+    var checked = document.querySelectorAll('.question-checkbox:checked');
+    if (checked.length === 0) return;
+    if (!confirm('确定删除选中的 ' + checked.length + ' 道题目？此操作不可撤销。')) return;
+    document.getElementById('batch-form').submit();
+}
+</script>
 {% endblock %}

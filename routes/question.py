@@ -174,14 +174,40 @@ def delete(id):
     db.session.commit()
 
     # 清理无关联题目的空标签
+    _cleanup_orphan_tags()
+
+    flash("题目已删除。", "success")
+    return redirect(url_for("question.list_questions"))
+
+
+@bp.route("/batch-delete", methods=("POST",))
+@login_required
+def batch_delete():
+    ids = request.form.getlist("ids", type=int)
+    if not ids:
+        flash("未选择任何题目。", "warning")
+        return redirect(url_for("question.list_questions"))
+
+    questions = Question.query.filter(Question.id.in_(ids)).all()
+    for q in questions:
+        delete_image(q.image)
+        db.session.delete(q)
+    db.session.commit()
+
+    # 清理无关联题目的空标签
+    _cleanup_orphan_tags()
+
+    flash(f"已删除 {len(questions)} 道题目。", "success")
+    return redirect(url_for("question.list_questions"))
+
+
+def _cleanup_orphan_tags():
+    """删除无题目关联的空标签。"""
     orphan_tags = Tag.query.filter(~Tag.questions.any()).all()
     for tag in orphan_tags:
         db.session.delete(tag)
     if orphan_tags:
         db.session.commit()
-
-    flash("题目已删除。", "success")
-    return redirect(url_for("question.list_questions"))
 
 
 @bp.route("/import", methods=("GET", "POST"))
