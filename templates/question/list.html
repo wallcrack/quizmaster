@@ -34,7 +34,7 @@
     </div>
     <div>
         <label class="block text-sm font-medium">出处</label>
-        <select name="source" class="w-full border rounded px-3 py-2">
+        <select name="source" id="source-select" onchange="updateChapters()" class="w-full border rounded px-3 py-2">
             <option value="">全部</option>
             {% for src in all_sources %}
                 <option value="{{ src }}" {% if filters.get('source') == src %}selected{% endif %}>{{ src }}</option>
@@ -43,11 +43,8 @@
     </div>
     <div>
         <label class="block text-sm font-medium">章节</label>
-        <select name="chapter" class="w-full border rounded px-3 py-2">
+        <select name="chapter" id="chapter-select" class="w-full border rounded px-3 py-2">
             <option value="">全部</option>
-            {% for ch in all_chapters %}
-                <option value="{{ ch }}" {% if filters.get('chapter') == ch %}selected{% endif %}>{{ ch }}</option>
-            {% endfor %}
         </select>
     </div>
     <div>
@@ -120,6 +117,29 @@
 {% endif %}
 
 <script>
+var chaptersBySource = {{ chapters_by_source | tojson }};
+var currentChapter = {{ (filters.get('chapter', '') or '') | tojson }};
+
+function updateChapters() {
+    var source = document.getElementById('source-select').value;
+    var chapterSelect = document.getElementById('chapter-select');
+    chapterSelect.innerHTML = '<option value="">全部</option>';
+    if (source && chaptersBySource[source]) {
+        chaptersBySource[source].forEach(function(ch) {
+            var opt = document.createElement('option');
+            opt.value = ch;
+            opt.textContent = ch;
+            chapterSelect.appendChild(opt);
+        });
+    }
+}
+
+// 页面加载时填充章节下拉并恢复选中值
+updateChapters();
+if (currentChapter) {
+    document.getElementById('chapter-select').value = currentChapter;
+}
+
 var checkboxes = document.querySelectorAll('.question-checkbox');
 var batchBar = document.getElementById('batch-bar');
 var selectAll = document.getElementById('select-all');

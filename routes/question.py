@@ -179,10 +179,19 @@ def list_questions():
         r[0] for r in
         db.session.query(Question.source).filter(Question.source.isnot(None), Question.source != "").distinct().order_by(Question.source).all()
     ]
-    all_chapters = [
-        r[0] for r in
-        db.session.query(Question.chapter).filter(Question.chapter.isnot(None), Question.chapter != "").distinct().order_by(Question.chapter).all()
-    ]
+    # 出处→章节 两级联动数据
+    rows = (
+        db.session.query(Question.source, Question.chapter)
+        .filter(Question.source.isnot(None), Question.chapter.isnot(None))
+        .filter(Question.source != "", Question.chapter != "")
+        .distinct()
+        .order_by(Question.source, Question.chapter)
+        .all()
+    )
+    chapters_by_source = {}
+    for src, ch in rows:
+        chapters_by_source.setdefault(src, []).append(ch)
+
     return render_template(
         "question/list.html",
         questions=questions,
@@ -191,7 +200,7 @@ def list_questions():
         difficulties=DIFFICULTIES,
         tags=tags,
         all_sources=all_sources,
-        all_chapters=all_chapters,
+        chapters_by_source=chapters_by_source,
         filters=filters,
         has_filter=has_filter,
     )
