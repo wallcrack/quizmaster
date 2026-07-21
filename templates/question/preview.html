@@ -128,10 +128,12 @@ function toggleExplanation() {
         panel.style.display = 'block';
         icon.textContent = '▼';
         showAnswers();
+        sessionStorage.setItem('previewExplanationOpen', '1');
     } else {
         panel.style.display = 'none';
         icon.textContent = '▶';
         hideAnswers();
+        sessionStorage.removeItem('previewExplanationOpen');
     }
 }
 
@@ -142,11 +144,34 @@ function toggleAnswer() {
         hideAnswers();
         btn.dataset.showing = '0';
         btn.textContent = '显示答案';
+        sessionStorage.removeItem('previewAnswerOpen');
     } else {
         showAnswers();
         btn.dataset.showing = '1';
         btn.textContent = '隐藏答案';
+        sessionStorage.setItem('previewAnswerOpen', '1');
     }
 }
+
+// 翻题时恢复展开状态
+(function() {
+    if (sessionStorage.getItem('previewExplanationOpen') === '1') {
+        var panel = document.getElementById('explanation-panel');
+        var icon = document.getElementById('toggle-icon');
+        if (panel) {
+            panel.style.display = 'block';
+            icon.textContent = '▼';
+            showAnswers();
+        }
+    }
+    if (sessionStorage.getItem('previewAnswerOpen') === '1') {
+        var btn = document.getElementById('answer-toggle');
+        if (btn) {
+            showAnswers();
+            btn.dataset.showing = '1';
+            btn.textContent = '隐藏答案';
+        }
+    }
+})();
 </script>
 {% endblock %}
