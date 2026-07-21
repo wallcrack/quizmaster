@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 from pathlib import Path
 
@@ -67,6 +68,59 @@ def delete_image(filename):
             os.remove(filepath)
         except OSError:
             pass
+
+
+def _extract_markdown_images(text):
+    """从 Markdown 文本中提取图片文件名（如 ![](foo.png) → foo.png）。"""
+    if not text:
+        return []
+    # 匹配 ![alt](filename) 或 ![](/static/uploads/filename)
+    pattern = r"!\[.*?\]\((?:/static/uploads/)?([^)]+)\)"
+    return re.findall(pattern, text)
+
+
+def _get_referenced_images(question):
+    """获取一道题目引用的所有图片文件名（image 字段 + Markdown 内联图）。"""
+    files = set()
+    if question.image:
+        files.add(question.image)
+    files.update(_extract_markdown_images(question.content or ""))
+    files.update(_extract_markdown_images(question.explanation or ""))
+    return files
+
+
+def _is_image_used(filename):
+    """检查图片是否被任意题目引用。"""
+    if Question.query.filter(Question.image == filename).first():
+        return True
+    # 检查 Markdown 内容中的引用（用括号包裹以防部分匹配）
+    pattern = f"({filename})"
+    if Question.query.filter(Question.content.contains(pattern)).first():
+        return True
+    if Question.query.filter(Question.explanation.contains(pattern)).first():
+        return True
+    return False
+
+
+def _cleanup_orphan_images():
+    """清理上传目录中所有未被引用的图片，返回删除数量。"""
+    upload_dir = Path(current_app.config["UPLOAD_FOLDER"])
+    if not upload_dir.exists():
+        return 0
+
+    all_refs = set()
+    for q in Question.query.all():
+        all_refs.update(_get_referenced_images(q))
+
+    deleted = 0
+    for filepath in upload_dir.iterdir():
+        if filepath.is_file() and filepath.name not in all_refs:
+            try:
+                os.remove(filepath)
+                deleted += 1
+            except OSError:
+                pass
+    return deleted
 
 
 QUESTION_TYPES = [
@@ -189,11 +243,16 @@ def edit(id):
 @login_required
 def delete(id):
     question = Question.query.get_or_404(id)
-    delete_image(question.image)
+    # 收集该题目引用的所有图片，删除题目后再判断是否可清理
+    image_refs = _get_referenced_images(question)
     db.session.delete(question)
     db.session.commit()
 
-    # 清理无关联题目的空标签
+    for filename in image_refs:
+        if not _is_image_used(filename):
+            delete_image(filename)
+
+    # 清理无关联题目的空标签和孤儿图片
     _cleanup_orphan_tags()
 
     flash("题目已删除。", "success")
@@ -209,10 +268,20 @@ def batch_delete():
         return redirect(url_for("question.list_questions"))
 
     questions = Question.query.filter(Question.id.in_(ids)).all()
+
+    # 收集所有将被删除题目引用的图片
+    all_image_refs = set()
     for q in questions:
-        delete_image(q.image)
+        all_image_refs.update(_get_referenced_images(q))
+
+    for q in questions:
         db.session.delete(q)
     db.session.commit()
+
+    # 删除不再被任何题目引用的图片
+    for filename in all_image_refs:
+        if not _is_image_used(filename):
+            delete_image(filename)
 
     # 清理无关联题目的空标签
     _cleanup_orphan_tags()
