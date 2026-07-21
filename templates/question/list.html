@@ -96,7 +96,7 @@
     </div>
 </form>
 
-{% if pagination.pages > 1 %}
+{% if pagination and pagination.pages > 1 %}
 <div class="flex justify-center space-x-2 mt-6">
     {% if pagination.has_prev %}
         <a href="{{ url_for('question.list_questions', page=pagination.prev_num, **filters) }}" class="px-3 py-1 border rounded hover:bg-gray-100">上一页</a>
