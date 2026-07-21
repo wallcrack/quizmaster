@@ -34,7 +34,7 @@
             </div>
         {% endif %}
 
-        {% if question.type.value in ('single', 'multiple', 'true_false') %}
+        {% if question.type.value in ('single', 'multiple', 'true_false') and not question.explanation %}
         <button type="button" id="answer-toggle" onclick="toggleAnswer()" data-showing="0" class="mb-3 text-sm bg-yellow-100 border border-yellow-300 px-4 py-2 rounded hover:bg-yellow-200">显示答案</button>
         {% endif %}
 
@@ -103,40 +103,47 @@
 </div>
 
 <script>
+function showAnswers() {
+    document.querySelectorAll('.answer-option').forEach(function(opt) {
+        if (opt.dataset.correct === 'true') {
+            opt.classList.remove('bg-gray-50');
+            opt.classList.add('bg-green-100', 'border-green-300');
+        }
+    });
+    document.querySelectorAll('.answer-mark').forEach(function(m) { m.style.display = ''; });
+}
+
+function hideAnswers() {
+    document.querySelectorAll('.answer-option').forEach(function(opt) {
+        opt.classList.remove('bg-green-100', 'border-green-300');
+        opt.classList.add('bg-gray-50');
+    });
+    document.querySelectorAll('.answer-mark').forEach(function(m) { m.style.display = 'none'; });
+}
+
 function toggleExplanation() {
     var panel = document.getElementById('explanation-panel');
     var icon = document.getElementById('toggle-icon');
     if (panel.style.display === 'none') {
         panel.style.display = 'block';
         icon.textContent = '▼';
+        showAnswers();
     } else {
         panel.style.display = 'none';
         icon.textContent = '▶';
+        hideAnswers();
     }
 }
 
 function toggleAnswer() {
     var btn = document.getElementById('answer-toggle');
     var showing = btn.dataset.showing === '1';
-    var marks = document.querySelectorAll('.answer-mark');
-    var options = document.querySelectorAll('.answer-option');
-
     if (showing) {
-        marks.forEach(function(m) { m.style.display = 'none'; });
-        options.forEach(function(opt) {
-            opt.classList.remove('bg-green-100', 'border-green-300');
-            opt.classList.add('bg-gray-50');
-        });
+        hideAnswers();
         btn.dataset.showing = '0';
         btn.textContent = '显示答案';
     } else {
-        options.forEach(function(opt) {
-            if (opt.dataset.correct === 'true') {
-                opt.classList.remove('bg-gray-50');
-                opt.classList.add('bg-green-100', 'border-green-300');
-            }
-        });
-        marks.forEach(function(m) { m.style.display = ''; });
+        showAnswers();
         btn.dataset.showing = '1';
         btn.textContent = '隐藏答案';
     }
