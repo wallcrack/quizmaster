@@ -221,6 +221,17 @@ def batch_delete():
     return redirect(url_for("question.list_questions"))
 
 
+@bp.route("/<int:id>/preview")
+@login_required
+def preview(id):
+    question = Question.query.get_or_404(id)
+    return render_template(
+        "question/preview.html",
+        question=question,
+        types=QUESTION_TYPES,
+    )
+
+
 def _cleanup_orphan_tags():
     """删除无题目关联的空标签。"""
     orphan_tags = Tag.query.filter(~Tag.questions.any()).all()

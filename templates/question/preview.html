@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ question.content | truncate(30) }} - 预览{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex justify-between items-center mb-4">
+        <div class="text-sm text-gray-600">
+            {% for value, label in types %}{% if value == question.type.value %}{{ label }}{% endif %}{% endfor %}
+            {% if question.chapter %} · {{ question.chapter }}{% endif %}
+            {% if question.source %} · {{ question.source }}{% endif %}
+        </div>
+        <a href="{{ url_for('question.list_questions') }}" class="text-sm text-blue-600 hover:underline">← 返回题库</a>
+    </div>
+
+    <div class="bg-white p-6 rounded shadow mb-4">
+        <div class="text-lg font-medium mb-4">{{ question.content | markdown }}</div>
+        {% if question.image %}
+            <div class="mb-4">
+                <img src="{{ url_for('static', filename='uploads/' + question.image) }}" alt="题目配图" class="max-w-full rounded border">
+            </div>
+        {% endif %}
+
+        {% if question.type.value == 'single' %}
+            {% for option in question.options %}
+                <label class="flex items-center space-x-3 p-4 border rounded mb-2 {% if loop.index0|string == question.answer %}bg-green-100 border-green-300{% else %}bg-gray-50{% endif %}">
+                    <input type="radio" disabled {% if loop.index0|string == question.answer %}checked{% endif %} class="h-5 w-5">
+                    <span class="text-base">{{ option }}</span>
+                    {% if loop.index0|string == question.answer %}<span class="text-green-600 text-sm ml-auto">✓ 正确答案</span>{% endif %}
+                </label>
+            {% endfor %}
+
+        {% elif question.type.value == 'multiple' %}
+            {% for option in question.options %}
+                {% set idx = loop.index0|string %}
+                <label class="flex items-center space-x-3 p-4 border rounded mb-2 {% if idx in question.answer.split(',') %}bg-green-100 border-green-300{% else %}bg-gray-50{% endif %}">
+                    <input type="checkbox" disabled {% if idx in question.answer.split(',') %}checked{% endif %} class="h-5 w-5">
+                    <span class="text-base">{{ option }}</span>
+                </label>
+            {% endfor %}
+            <p class="text-sm text-green-600 mt-1">正确答案：{{ question.answer }}</p>
+
+        {% elif question.type.value == 'true_false' %}
+            <div class="space-y-3">
+                <label class="flex items-center space-x-3 p-4 border rounded mb-2 {% if question.answer == '正确' or question.answer == 'true' %}bg-green-100 border-green-300{% else %}bg-gray-50{% endif %}">
+                    <input type="radio" disabled {% if question.answer == '正确' or question.answer == 'true' %}checked{% endif %} class="h-5 w-5">
+                    <span class="text-base">正确</span>
+                </label>
+                <label class="flex items-center space-x-3 p-4 border rounded mb-2 {% if question.answer == '错误' or question.answer == 'false' %}bg-green-100 border-green-300{% else %}bg-gray-50{% endif %}">
+                    <input type="radio" disabled {% if question.answer == '错误' or question.answer == 'false' %}checked{% endif %} class="h-5 w-5">
+                    <span class="text-base">错误</span>
+                </label>
+            </div>
+
+        {% else %}
+            <div class="bg-gray-50 p-4 rounded border">
+                <p class="text-sm font-medium text-gray-600 mb-2">参考答案：</p>
+                <div class="text-base">{{ question.answer | markdown }}</div>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if question.explanation %}
+    <div class="bg-blue-50 border border-blue-200 p-4 rounded mb-4">
+        <p class="font-medium mb-1">解析</p>
+        <div class="text-gray-700">{{ question.explanation | markdown }}</div>
+    </div>
+    {% endif %}
+
+    {% if question.tags %}
+    <div class="text-sm text-gray-500 mb-6">
+        标签：{% for tag in question.tags %}<span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded mr-1">{{ tag.name }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="flex space-x-3">
+        <a href="{{ url_for('question.list_questions') }}" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">返回题库</a>
+        <a href="{{ url_for('question.edit', id=question.id) }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">编辑此题</a>
+    </div>
+</div>
+{% endblock %}
