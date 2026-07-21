@@ -148,8 +148,6 @@ def create():
 @login_required
 def edit(id):
     question = Question.query.get_or_404(id)
-    if question.created_by != current_user.id:
-        abort(403)
 
     if request.method == "POST":
         if _question_from_form(question):
@@ -171,8 +169,6 @@ def edit(id):
 @login_required
 def delete(id):
     question = Question.query.get_or_404(id)
-    if question.created_by != current_user.id:
-        abort(403)
     delete_image(question.image)
     db.session.delete(question)
     db.session.commit()
