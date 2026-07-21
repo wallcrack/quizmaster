@@ -61,8 +61,11 @@
     </div>
 
     {% if question.explanation %}
-    <div class="bg-blue-50 border border-blue-200 p-4 rounded mb-4">
-        <p class="font-medium mb-1">解析</p>
+    <button type="button" onclick="toggleExplanation()" id="toggle-btn" class="w-full text-left bg-blue-50 border border-blue-200 p-3 rounded mb-4 hover:bg-blue-100 flex justify-between items-center">
+        <span class="font-medium text-blue-800">解析</span>
+        <span id="toggle-icon" class="text-blue-600 text-lg">▶</span>
+    </button>
+    <div id="explanation-panel" class="bg-blue-50 border border-blue-200 p-4 rounded mb-4" style="display:none">
         <div class="text-gray-700">{{ question.explanation | markdown }}</div>
     </div>
     {% endif %}
@@ -78,4 +81,18 @@
         <a href="{{ url_for('question.edit', id=question.id) }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">编辑此题</a>
     </div>
 </div>
+
+<script>
+function toggleExplanation() {
+    var panel = document.getElementById('explanation-panel');
+    var icon = document.getElementById('toggle-icon');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        icon.textContent = '▼';
+    } else {
+        panel.style.display = 'none';
+        icon.textContent = '▶';
+    }
+}
+</script>
 {% endblock %}
