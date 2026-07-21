@@ -123,7 +123,26 @@ def answer(session_id):
         user_answer = request.form.get("user_answer", "")
 
     quiz_service.submit_answer(record_id, user_answer)
-    return redirect(url_for("quiz.do", session_id=session.id))
+
+    # 提交后停留在当前题目，展示解析
+    records = quiz_service.get_session_questions(session)
+    total = len(records)
+    current_index = 1
+    for idx, r in enumerate(records, start=1):
+        if r.id == record_id:
+            current_index = idx
+            break
+
+    return render_template(
+        "quiz/do.html",
+        session=session,
+        records=records,
+        current_record=record,
+        current_index=current_index,
+        total=total,
+        reviewing=True,
+        show_explanation=session.config.get("show_explanation", False),
+    )
 
 
 @bp.route("/<int:session_id>/finish", methods=("GET", "POST"))
