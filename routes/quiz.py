@@ -12,25 +12,23 @@ bp = Blueprint("quiz", __name__, url_prefix="/quiz")
 @login_required
 def setup():
     tags = Tag.query.order_by(Tag.name).all()
-    chapters = (
-        db.session.query(Question.chapter)
-        .filter(Question.chapter.isnot(None))
+    # 按来源分组章节，用于两级联动选择
+    rows = (
+        db.session.query(Question.source, Question.chapter)
+        .filter(Question.source.isnot(None), Question.chapter.isnot(None))
+        .filter(Question.source != "", Question.chapter != "")
         .distinct()
-        .order_by(Question.chapter)
+        .order_by(Question.source, Question.chapter)
         .all()
     )
-    sources = (
-        db.session.query(Question.source)
-        .filter(Question.source.isnot(None))
-        .distinct()
-        .order_by(Question.source)
-        .all()
-    )
+    chapters_by_source = {}
+    for src, ch in rows:
+        chapters_by_source.setdefault(src, []).append(ch)
+
     return render_template(
         "quiz/setup.html",
         tags=tags,
-        chapters=[c[0] for c in chapters if c[0]],
-        sources=[s[0] for s in sources if s[0]],
+        chapters_by_source=chapters_by_source,
     )
 
 
@@ -50,10 +48,12 @@ def start():
             return redirect(url_for("quiz.setup"))
         config["tag_ids"] = tag_ids
     elif mode == "chapter":
+        source = request.form.get("source", "").strip()
         chapter = request.form.get("chapter", "").strip()
-        if not chapter:
-            flash("请输入要练习的章节。", "danger")
+        if not source and not chapter:
+            flash("请选择书本或章节。", "danger")
             return redirect(url_for("quiz.setup"))
+        config["source"] = source
         config["chapter"] = chapter
 
     session = quiz_service.start_session(current_user.id, mode, config)

@@ -33,16 +33,19 @@ def start_session(user_id, mode, config):
         if tag_ids:
             query = query.join(Question.tags).filter(Tag.id.in_(tag_ids))
     elif mode_enum == PracticeMode.chapter:
+        source = config.get("source", "").strip()
         chapter = config.get("chapter", "").strip()
+        if source:
+            query = query.filter(Question.source == source)
         if chapter:
-            query = query.filter(Question.chapter.ilike(f"%{chapter}%"))
+            query = query.filter(Question.chapter == chapter)
     elif mode_enum == PracticeMode.wrong:
         # Load recent wrong answers (objective wrong or subjective < 60)
         wrong_subquery = (
             db.session.query(AnswerRecord.question_id)
             .filter(AnswerRecord.session.has(user_id=user_id))
             .filter(
-                (AnswerRecord.is_correct == False)
+                (not AnswerRecord.is_correct)
                 | (AnswerRecord.self_evaluation < 60)
             )
             .distinct()
