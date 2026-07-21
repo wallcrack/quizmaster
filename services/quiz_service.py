@@ -45,7 +45,7 @@ def start_session(user_id, mode, config):
             db.session.query(AnswerRecord.question_id)
             .filter(AnswerRecord.session.has(user_id=user_id))
             .filter(
-                (not AnswerRecord.is_correct)
+                (AnswerRecord.is_correct == False)
                 | (AnswerRecord.self_evaluation < 60)
             )
             .distinct()
